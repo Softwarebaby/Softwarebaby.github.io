@@ -10,6 +10,9 @@
 <p>　　本书的作者Joshua Bloch 带队设计过Java平台的许多特性，尤其是主导并实现了JDK5.0中的Java集合框架，因此，学习他的经验总结，对更好地阅读并理解JDK源码也是大有裨益的。</p>
 <p><strong>思维导图：</strong></p>
 <p><img src="/images/pasted-0.png" alt="upload successful"></p>
+<p>　　<em>本文主要是为了测试博客效果，要想查看完整内容，请前往我的CSDN专栏！</em></p>
+<p><strong>CSDN专栏：<a href="https://blog.csdn.net/qq_34519487/category_9710430.html" target="_blank" rel="noopener">Effective Java</a></strong></p>
+<p><a href="https://blog.csdn.net/qq_34519487/article/details/104252662" target="_blank" rel="noopener">原文链接</a></p>
 ]]></content>
       <categories>
         <category>Effective Java</category>
@@ -35,5 +38,11 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
 ]]></content>
+      <categories>
+        <category>博客</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
   </entry>
 </search>
