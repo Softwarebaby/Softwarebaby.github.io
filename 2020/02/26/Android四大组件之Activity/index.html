@@ -87,15 +87,15 @@
 <meta property="og:url" content="https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BActivity/index.html">
 <meta property="og:site_name" content="Flow Garden">
 <meta property="og:description" content="一、生命周期 注意onStart()和onResume()区别：  onStart()：前台不可见，不能进行交互 onResume()：前台可见，可以进行交互  特定场景下的生命周期回调：（1）用户打开新的Activiy的时候，之前的Activity： onPause()-&gt;onStop()（2）按Back键回退时： onPause()-&gt;onStop()-&gt;onDestory(">
-<meta property="og:image" content="https://lvmdu.gitee.io/images/img_activity_life_cycle.png">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_activity_life_cycle.jpg">
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_activity_1.jpg">
-<meta property="og:image" content="https://lvmdu.gitee.io/images/img_activity_2.png">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_activity_2.jpg">
 <meta property="article:published_time" content="2020-02-26T07:51:00.000Z">
-<meta property="article:modified_time" content="2020-02-26T10:09:06.529Z">
+<meta property="article:modified_time" content="2020-02-26T10:12:50.939Z">
 <meta property="article:author" content="Bob Du">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://lvmdu.gitee.io/images/img_activity_life_cycle.png">
+<meta name="twitter:image" content="https://lvmdu.gitee.io/images/img_activity_life_cycle.jpg">
 
 
 
@@ -433,14 +433,14 @@
       
 
       
-        <h2 id="一、生命周期"><a href="#一、生命周期" class="headerlink" title="一、生命周期"></a>一、生命周期</h2><p><img src="/images/img_activity_life_cycle.png" alt="img_activity_life_cycle"></p>
+        <h2 id="一、生命周期"><a href="#一、生命周期" class="headerlink" title="一、生命周期"></a>一、生命周期</h2><p><img src="/images/img_activity_life_cycle.jpg" alt="img_activity_life_cycle"></p>
 <p><strong>注意</strong><br>onStart()和onResume()区别：</p>
 <ul>
 <li>onStart()：前台不可见，不能进行交互</li>
 <li>onResume()：前台可见，可以进行交互</li>
 </ul>
-<p><strong>特定场景下的生命周期回调：</strong><br>（1）用户打开新的Activiy的时候，之前的Activity： onPause()-&gt;onStop()<br>（2）按Back键回退时： onPause()-&gt;onStop()-&gt;onDestory()<br>（3）按Home键切换到桌面后又回到该Actitivy： onPause()-&gt;onStop()-&gt;onRestart()-&gt;onStart()-&gt;onResume()<br>（4）调用finish()方法： onDestory()<br>（5）横竖屏切换：onPause()-&gt;onSaveInstanceState()-&gt; onStop()-&gt;onDestroy()-&gt;onCreate()-&gt;onStart()-&gt;onRestoreInstanceState()-&gt;onResume()</p>
-<p><strong><em>onSaveInstanceState和onRestoreInstanceState</em></strong><br>　　在Activity由于异常情况下终止时， 系统会调用<strong>onSaveInstanceState</strong>来保存当前Activity的状态。 当异常终止的Activity被重建以后， 系统会调用<strong>onRestoreInstanceState</strong>， 并且把Activity销毁时onSaveInstanceState方法所保存的Bundle对象参数同时传递给onRestoreInstanceState和onCreate方法。<br>onCreate和onRestoreInstanceState方法来恢复Activity的状态的区别：<br>onRestoreInstanceState回调则表明其中Bundle对象非空， 不用加非空判断； onCreate需要非空判断。 建议使用onRestoreInstanceState。<br><strong>调用时机：</strong></p>
+<h3 id="特定场景下的生命周期回调："><a href="#特定场景下的生命周期回调：" class="headerlink" title="特定场景下的生命周期回调："></a>特定场景下的生命周期回调：</h3><p>（1）用户打开新的Activiy的时候，之前的Activity： onPause()-&gt;onStop()<br>（2）按Back键回退时： onPause()-&gt;onStop()-&gt;onDestory()<br>（3）按Home键切换到桌面后又回到该Actitivy： onPause()-&gt;onStop()-&gt;onRestart()-&gt;onStart()-&gt;onResume()<br>（4）调用finish()方法： onDestory()<br>（5）横竖屏切换：onPause()-&gt;onSaveInstanceState()-&gt; onStop()-&gt;onDestroy()-&gt;onCreate()-&gt;onStart()-&gt;onRestoreInstanceState()-&gt;onResume()</p>
+<h4 id="onSaveInstanceState和onRestoreInstanceState"><a href="#onSaveInstanceState和onRestoreInstanceState" class="headerlink" title="onSaveInstanceState和onRestoreInstanceState"></a>onSaveInstanceState和onRestoreInstanceState</h4><p>　　在Activity由于异常情况下终止时， 系统会调用<strong>onSaveInstanceState</strong>来保存当前Activity的状态。 当异常终止的Activity被重建以后， 系统会调用<strong>onRestoreInstanceState</strong>， 并且把Activity销毁时onSaveInstanceState方法所保存的Bundle对象参数同时传递给onRestoreInstanceState和onCreate方法。<br>onCreate和onRestoreInstanceState方法来恢复Activity的状态的区别：<br>onRestoreInstanceState回调则表明其中Bundle对象非空， 不用加非空判断； onCreate需要非空判断。 建议使用onRestoreInstanceState。<br><strong>调用时机：</strong></p>
 <ul>
 <li>onSaveInstanceState()：onStop()之前</li>
 <li>onRestoreInstanceState()：onStart()之后</li>
@@ -452,11 +452,11 @@
 <p>来避免横竖屏切换时， Activity的销毁和重建。<br>而是回调了下面的方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onConfigurationChanged</span><span class="params">(Configuration newConfig)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onConfigurationChanged(newConfig);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="二、启动模式"><a href="#二、启动模式" class="headerlink" title="二、启动模式"></a>二、启动模式</h2><h4 id="1-标准模式（Standard）"><a href="#1-标准模式（Standard）" class="headerlink" title="1. 标准模式（Standard）"></a>1. 标准模式（Standard）</h4><p>　　每启动一次Activity，就会创建一个新的Activity实例并置于栈顶。</p>
-<h4 id="2-栈顶复用模式（SingleTop）"><a href="#2-栈顶复用模式（SingleTop）" class="headerlink" title="2. 栈顶复用模式（SingleTop）"></a>2. 栈顶复用模式（SingleTop）</h4><p>　　如果需要新建的Activity位于任务栈栈顶，那么此Activity的实例就不会重建，而是重用栈顶的实例。<br><strong>应用场景：</strong><br>（1）在通知栏点击收到的通知，然后需要启动一个Activity，这个Activity就可以用singleTop，否则每次点击都会新建一个Activity。<br>（2）某个场景下连续快速点击，启动了两个Activity。如果这个时候待启动的Activity使用SingleTop模式可以避免这个Bug。</p>
-<h4 id="3-栈内复用模式（SingleTask）"><a href="#3-栈内复用模式（SingleTask）" class="headerlink" title="3. 栈内复用模式（SingleTask）"></a>3. 栈内复用模式（SingleTask）</h4><p>　　该模式是一种<strong>单例模式</strong>，即<strong>一个栈内只有一个该Activity实例</strong>。该模式可以通过在AndroidManifest文件中Activity的android:taskAffinity属性的需要加载到那个栈中。<br>　　如果Activity指定的栈不存在，则创建一个栈，并把创建的Activity压入栈内。如果Activity指定的栈存在，如果其中没有该Activity实例，则会创建Activity并压入栈顶，如果其中有该Activity实例，则把该Activity实例之上的Activity清除出栈，重用并让该Activity实例处在栈顶。<br><strong>应用场景：</strong><br>　　大多数App的主页。对于大部分应用，当我们在主界面点击回退按钮的<br>时候都是退出应用，那么当我们第一次进入主界面之后，主界面位于栈底，以后不管我们打开了多少个Activity，只要我们再次回到主界面，主界面Activity上所有的Activity都会被移除，从而主界面Activity处于栈顶。通过这种方式能够保证退出应用时所有的Activity都能销毁。</p>
-<h4 id="4-单例模式（SingleInstance）"><a href="#4-单例模式（SingleInstance）" class="headerlink" title="4. 单例模式（SingleInstance）"></a>4. 单例模式（SingleInstance）</h4><p>　　栈内复用模式（singleTask）的加强版，打开该Activity时，直接创建一个新的任务栈，并创建该Activity实例放入新栈中。<br>　　一旦该模式的Activity实例已经存在于某个栈中，任何应用再激活该Activity时都会重用该栈中的实例。<br><strong>应用场景：</strong><br>　　呼叫来电界面</p>
-<h4 id="特殊情况："><a href="#特殊情况：" class="headerlink" title="* 特殊情况："></a>* 特殊情况：</h4><p>前台栈和后台栈的交互<br>假如目前有两个任务栈。 前台任务栈为AB， 后台任务栈为CD， 这里假设CD的启动模式均为SingleTask,现在请求启动D， 那么这个后台的任务栈都会被切换到前台，这个时候整个后退列表就变成了ABCD。 当用户按Back返回时， 列表中的Activity会一一出栈， 如下图：<br><img src="/images/img_activity_1.jpg" alt="img_activity_1"><br>如果不是请求启动D而是启动C， 那么情况又不一样， 如下图：<br><img src="/images/img_activity_2.png" alt="img_activity_2"><br>　　<strong>调用SingleTask模式的后台任务栈中的Activity， 会把整个栈的Actvity压入当前栈的栈顶。</strong> SingleTask会具有ClearTop特性， 把之上的栈内Activity清除。</p>
+<h2 id="二、启动模式"><a href="#二、启动模式" class="headerlink" title="二、启动模式"></a>二、启动模式</h2><h3 id="1-标准模式（Standard）"><a href="#1-标准模式（Standard）" class="headerlink" title="1. 标准模式（Standard）"></a>1. 标准模式（Standard）</h3><p>　　每启动一次Activity，就会创建一个新的Activity实例并置于栈顶。</p>
+<h3 id="2-栈顶复用模式（SingleTop）"><a href="#2-栈顶复用模式（SingleTop）" class="headerlink" title="2. 栈顶复用模式（SingleTop）"></a>2. 栈顶复用模式（SingleTop）</h3><p>　　如果需要新建的Activity位于任务栈栈顶，那么此Activity的实例就不会重建，而是重用栈顶的实例。<br><strong>应用场景：</strong><br>（1）在通知栏点击收到的通知，然后需要启动一个Activity，这个Activity就可以用singleTop，否则每次点击都会新建一个Activity。<br>（2）某个场景下连续快速点击，启动了两个Activity。如果这个时候待启动的Activity使用SingleTop模式可以避免这个Bug。</p>
+<h3 id="3-栈内复用模式（SingleTask）"><a href="#3-栈内复用模式（SingleTask）" class="headerlink" title="3. 栈内复用模式（SingleTask）"></a>3. 栈内复用模式（SingleTask）</h3><p>　　该模式是一种<strong>单例模式</strong>，即<strong>一个栈内只有一个该Activity实例</strong>。该模式可以通过在AndroidManifest文件中Activity的android:taskAffinity属性的需要加载到那个栈中。<br>　　如果Activity指定的栈不存在，则创建一个栈，并把创建的Activity压入栈内。如果Activity指定的栈存在，如果其中没有该Activity实例，则会创建Activity并压入栈顶，如果其中有该Activity实例，则把该Activity实例之上的Activity清除出栈，重用并让该Activity实例处在栈顶。<br><strong>应用场景：</strong><br>　　大多数App的主页。对于大部分应用，当我们在主界面点击回退按钮的<br>时候都是退出应用，那么当我们第一次进入主界面之后，主界面位于栈底，以后不管我们打开了多少个Activity，只要我们再次回到主界面，主界面Activity上所有的Activity都会被移除，从而主界面Activity处于栈顶。通过这种方式能够保证退出应用时所有的Activity都能销毁。</p>
+<h3 id="4-单例模式（SingleInstance）"><a href="#4-单例模式（SingleInstance）" class="headerlink" title="4. 单例模式（SingleInstance）"></a>4. 单例模式（SingleInstance）</h3><p>　　栈内复用模式（singleTask）的加强版，打开该Activity时，直接创建一个新的任务栈，并创建该Activity实例放入新栈中。<br>　　一旦该模式的Activity实例已经存在于某个栈中，任何应用再激活该Activity时都会重用该栈中的实例。<br><strong>应用场景：</strong><br>　　呼叫来电界面</p>
+<h4 id="特殊情况："><a href="#特殊情况：" class="headerlink" title="* 特殊情况："></a>* 特殊情况：</h4><p>前台栈和后台栈的交互<br>假如目前有两个任务栈。 前台任务栈为AB， 后台任务栈为CD， 这里假设CD的启动模式均为SingleTask,现在请求启动D， 那么这个后台的任务栈都会被切换到前台，这个时候整个后退列表就变成了ABCD。 当用户按Back返回时， 列表中的Activity会一一出栈， 如下图：<br><img src="/images/img_activity_1.jpg" alt="img_activity_1"><br>如果不是请求启动D而是启动C， 那么情况又不一样， 如下图：<br><img src="/images/img_activity_2.jpg" alt="img_activity_2"><br>　　<strong>调用SingleTask模式的后台任务栈中的Activity， 会把整个栈的Actvity压入当前栈的栈顶。</strong> SingleTask会具有ClearTop特性， 把之上的栈内Activity清除。</p>
 
       
     </div>
@@ -775,7 +775,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、生命周期"><span class="nav-number">1.</span> <span class="nav-text">一、生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、启动模式"><span class="nav-number">2.</span> <span class="nav-text">二、启动模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-标准模式（Standard）"><span class="nav-number">2.0.1.</span> <span class="nav-text">1. 标准模式（Standard）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-栈顶复用模式（SingleTop）"><span class="nav-number">2.0.2.</span> <span class="nav-text">2. 栈顶复用模式（SingleTop）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-栈内复用模式（SingleTask）"><span class="nav-number">2.0.3.</span> <span class="nav-text">3. 栈内复用模式（SingleTask）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-单例模式（SingleInstance）"><span class="nav-number">2.0.4.</span> <span class="nav-text">4. 单例模式（SingleInstance）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特殊情况："><span class="nav-number">2.0.5.</span> <span class="nav-text">* 特殊情况：</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、生命周期"><span class="nav-number">1.</span> <span class="nav-text">一、生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特定场景下的生命周期回调："><span class="nav-number">1.1.</span> <span class="nav-text">特定场景下的生命周期回调：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#onSaveInstanceState和onRestoreInstanceState"><span class="nav-number">1.1.1.</span> <span class="nav-text">onSaveInstanceState和onRestoreInstanceState</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、启动模式"><span class="nav-number">2.</span> <span class="nav-text">二、启动模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-标准模式（Standard）"><span class="nav-number">2.1.</span> <span class="nav-text">1. 标准模式（Standard）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-栈顶复用模式（SingleTop）"><span class="nav-number">2.2.</span> <span class="nav-text">2. 栈顶复用模式（SingleTop）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-栈内复用模式（SingleTask）"><span class="nav-number">2.3.</span> <span class="nav-text">3. 栈内复用模式（SingleTask）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-单例模式（SingleInstance）"><span class="nav-number">2.4.</span> <span class="nav-text">4. 单例模式（SingleInstance）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特殊情况："><span class="nav-number">2.4.1.</span> <span class="nav-text">* 特殊情况：</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
