@@ -107,14 +107,14 @@
   <entry>
     <title>Android四大组件之Activity</title>
     <url>/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BActivity/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<h2 id="一、生命周期"><a href="#一、生命周期" class="headerlink" title="一、生命周期"></a>一、生命周期</h2><p><img src="/images/img_activity_life_cycle.jpg" alt="img_activity_life_cycle"></p>
+    <content><![CDATA[<h2 id="一、生命周期"><a href="#一、生命周期" class="headerlink" title="一、生命周期"></a>一、生命周期</h2><p><img src="/images/img_activity_life_cycle.jpg" alt="img_activity_life_cycle"></p>
 <p><strong>注意</strong><br>onStart()和onResume()区别：</p>
 <ul>
 <li>onStart()：前台不可见，不能进行交互</li>
 <li>onResume()：前台可见，可以进行交互</li>
 </ul>
+<a id="more"></a>
+
 <h3 id="特定场景下的生命周期回调："><a href="#特定场景下的生命周期回调：" class="headerlink" title="特定场景下的生命周期回调："></a>特定场景下的生命周期回调：</h3><p>（1）用户打开新的Activiy的时候，之前的Activity： onPause()-&gt;onStop()<br>（2）按Back键回退时： onPause()-&gt;onStop()-&gt;onDestory()<br>（3）按Home键切换到桌面后又回到该Actitivy： onPause()-&gt;onStop()-&gt;onRestart()-&gt;onStart()-&gt;onResume()<br>（4）调用finish()方法： onDestory()<br>（5）横竖屏切换：onPause()-&gt;onSaveInstanceState()-&gt; onStop()-&gt;onDestroy()-&gt;onCreate()-&gt;onStart()-&gt;onRestoreInstanceState()-&gt;onResume()</p>
 <h4 id="onSaveInstanceState和onRestoreInstanceState"><a href="#onSaveInstanceState和onRestoreInstanceState" class="headerlink" title="onSaveInstanceState和onRestoreInstanceState"></a>onSaveInstanceState和onRestoreInstanceState</h4><p>　　在Activity由于异常情况下终止时， 系统会调用<strong>onSaveInstanceState</strong>来保存当前Activity的状态。 当异常终止的Activity被重建以后， 系统会调用<strong>onRestoreInstanceState</strong>， 并且把Activity销毁时onSaveInstanceState方法所保存的Bundle对象参数同时传递给onRestoreInstanceState和onCreate方法。<br>onCreate和onRestoreInstanceState方法来恢复Activity的状态的区别：<br>onRestoreInstanceState回调则表明其中Bundle对象非空， 不用加非空判断； onCreate需要非空判断。 建议使用onRestoreInstanceState。<br><strong>调用时机：</strong></p>
 <ul>
