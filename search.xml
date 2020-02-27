@@ -1,6 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>详解消息机制</title>
+    <url>/2020/02/27/%E8%AF%A6%E8%A7%A3%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p>　　Android的<strong>消息机制</strong>也就是Handler机制。主要的作用是用来在不同线程之间的通信，通常使用在子线程执行完成一些耗时操作，需要回到主线程更新界面UI时，通过Handler将有关UI的操作切换到主线程。</p>
+<a id="more"></a>
+
+<h2 id="一、消息机制存在的意义"><a href="#一、消息机制存在的意义" class="headerlink" title="一、消息机制存在的意义"></a>一、消息机制存在的意义</h2><p><strong>为什么不能在非UI线程中操作UI控件？</strong><br>　　因为Android的UI控件（View）不是线程安全的，如果在多线程中并发访问可能会导致UI控件处于不可预期的状态。<br><strong>为什么不对UI控件加上锁机制？</strong><br>　　首先加上锁会让UI访问的逻辑变得复杂；其次锁机制会降低UI访问的效率，因为锁机制会阻塞某些线程的执行。</p>
+<h2 id="二、消息机制的工作原理"><a href="#二、消息机制的工作原理" class="headerlink" title="二、消息机制的工作原理"></a>二、消息机制的工作原理</h2><p>消息机制主要包含： <strong>MessageQueue</strong>、<strong>Handler</strong> 和<strong>Looper</strong>这三大部分，以及<strong>Message</strong>。</p>
+<ul>
+<li>Message： 需要传递的消息， 可以传递数据；</li>
+<li>MessageQueue： 消息队列， 但是它的内部实现并不是用的队列， 实际上是通过一个<strong>单链表</strong>的数据结构来维护消息列表， 因为单链表在插入和删除上比较有优势。 主要功能向消息池投递消息(MessageQueue.enqueueMessage)和取走消息池的消息(MessageQueue.next)；</li>
+<li>Handler： 消息辅助类， 主要功能向消息池发送各种消息事件(Handler.sendMessage)和处理相应消息事件(Handler.handleMessage)；</li>
+<li>Looper： 不断循环执行(Looper.loop)， 从MessageQueue中读取消息， 按分发机制将消息分发给目标处理者。<br><img src="/images/img_handler.jpg" alt="img_handler"><h4 id="工作流程："><a href="#工作流程：" class="headerlink" title="工作流程："></a>工作流程：</h4>（1）应用程序启动的时候，在主线程中会默认调用了 Looper.preper()方法，初始化Looper对象并绑定到当前线程中，并在Looper内部维护一个MessageQueue。<br>（2）接着调用handler.sendMessage()发送消息（handler.postRunnable()实际上底层也是调用了handler.sendMessage()，只不过进行了封装），会通过MessageQueue.enqueueMessage()向MessageQueue中添加一条消息。<br>（3）主线程调用Looper.looper()开启循环，不断轮询消息队列，通过MessageQueue.next()取出消息。<br>（4）取出的message不为空则调用msg.target.dispatchMessage()传递分发消息，目标handler收到消息后会执行handler.handlerMessage()方法处理消息。</li>
+</ul>
+<p><strong>MessageQueue、Handler 和 Looper 三者之间的关系：</strong></p>
+<ul>
+<li><strong>一个线程中只能存在一个Looper</strong>， Looper是保存在ThreadLocal中的。 主线程（UI线程）已经创建了一个Looper， 所以在主线程中不需要再创建Looper， 但是在其他线程中需要创建Looper。</li>
+<li>每个线程中可以有多个Handler， 即<strong>一个Looper可以处理来自多个Handler的消息</strong>。</li>
+<li><strong>一个Looper中维护一个MessageQueue</strong>， 来维护消息队列， 消息队列中的Message可以来自不同的Handler。</li>
+</ul>
+<h2 id="三、深入理解消息机制"><a href="#三、深入理解消息机制" class="headerlink" title="三、深入理解消息机制"></a>三、深入理解消息机制</h2><h4 id="1-为什么一个线程只有一个Looper？"><a href="#1-为什么一个线程只有一个Looper？" class="headerlink" title="1. 为什么一个线程只有一个Looper？"></a>1. 为什么一个线程只有一个Looper？</h4><p>　　因为线程对应的Looper是在<strong>ThreadLocal</strong>里面存储，通过它可以在指定的线程中存储数据，数据存储以后，只有在指定线程中可以获取到存储的数据，对于其它线程来说无法获取到数据。另外，在Looper的创建方法Looper.prepare()中，会进行判断，如果当前线程已经存在Looper对象，就会报RunTimeException异常。<br><strong>补充：为什么ThreadLocal可以在多个线程中互不干扰的存储和修改数据？</strong> ThreadLocal所做的读写操作仅限于各自线程的内部</p>
+<h4 id="2-为什么主线程中可以直接使用Handler，而不用创建Looper？"><a href="#2-为什么主线程中可以直接使用Handler，而不用创建Looper？" class="headerlink" title="2. 为什么主线程中可以直接使用Handler，而不用创建Looper？"></a>2. 为什么主线程中可以直接使用Handler，而不用创建Looper？</h4><p>　　<strong>UI线程(ActivityThread)被创建时默认初始化了Looper</strong>。因此在主线程中可以直接使用Handler。</p>
+<h4 id="3-可以在子线程中直接使用Handler吗？如何在子线程中使用Handler？"><a href="#3-可以在子线程中直接使用Handler吗？如何在子线程中使用Handler？" class="headerlink" title="3. 可以在子线程中直接使用Handler吗？如何在子线程中使用Handler？"></a>3. 可以在子线程中直接使用Handler吗？如何在子线程中使用Handler？</h4><p>　　子线程中不可以直接使用Handler，子线程中默认是没有Looper的，同时MessageQueue又是Looper来维护的。因此如果在子线程中直接发送消息，是没有关联MessageQueue可以存储消息。因此会抛出异常。<br>　　如果想在子线程中使用Handler，必须通过Looper.prepare()去初始化一个Looper，并且再通过Looper.loop()开启循环。</p>
+<h4 id="4-Looper-loop是一个死循环，拿不到需要处理的Message就会阻塞，那在UI线程中为什么不会导致ANR？"><a href="#4-Looper-loop是一个死循环，拿不到需要处理的Message就会阻塞，那在UI线程中为什么不会导致ANR？" class="headerlink" title="4. Looper.loop是一个死循环，拿不到需要处理的Message就会阻塞，那在UI线程中为什么不会导致ANR？"></a>4. Looper.loop是一个死循环，拿不到需要处理的Message就会阻塞，那在UI线程中为什么不会导致ANR？</h4><p>　　在主线程的MessageQueue没有消息时，便阻塞在loop的queue.next()中的nativePollOnce()方法里，此时主线程会释放CPU资源进入休眠状态，直到下个消息到达或者有事务发生，通过往pipe管道写端写入数据来唤醒主线程工作。（因此，looper.looper()阻塞不会消耗大量的CPU资源。）<br>　　epoll机制，是一种IO多路复用机制，可以同时监控多个描述符，当某个描述符就绪(读或写就绪)，则立刻通知相应程序进行读或写操作，本质同步I/O，即读写是阻塞的。<br>　　所谓ANR便是Looper.loop没有得到及时处理，一旦没有消息，Linux的epoll机制则会通过管道写文件描述符的方式来对主线程进行唤醒与睡眠，Android里调用了linux层的代码实现在适当时会睡眠主线程。</p>
+<p><strong>消息循环（死循环）的必要性：</strong><br>　　线程既然是一段可执行的代码，当可执行代码执行完成后，线程生命周期便该终止了，线程退出。而对于主线程，我们是绝不希望会被运行一段时间，自己就退出，那么如何保证能一直存活呢？简单做法就是可执行代码是能一直执行下去的，死循环便能保证不会被退出。例如，binder线程也是采用死循环的方法，通过循环方式不同与Binder驱动进行读写操作，当然并非简单地死循环，无消息时会休眠。<br>　　ActivityThread的main方法主要就是做消息循环，一旦退出消息循环，那么你的应用也就退出了。如果main方法中没有Looper进行循环，那么主线程一运行完毕就会退出。</p>
+<h2 id="四、Handler引起的内存泄漏"><a href="#四、Handler引起的内存泄漏" class="headerlink" title="四、Handler引起的内存泄漏"></a>四、Handler引起的内存泄漏</h2><h3 id="1-原因："><a href="#1-原因：" class="headerlink" title="1. 原因："></a>1. 原因：</h3><p>　　<strong>非静态、匿名内部类会隐式持有外部类的引用，导致外部Activity无法回收。</strong></p>
+<h3 id="2-解决方法："><a href="#2-解决方法：" class="headerlink" title="2. 解决方法："></a>2. 解决方法：</h3><p>（1）将Handler修改为静态内部类<br>（2）Handler内部持有外部Activity的弱引用<br>（3）在onDestory()中调用handler.removeCallbackAndMessages(null)</p>
+<h2 id="五、AsyncTask"><a href="#五、AsyncTask" class="headerlink" title="五、AsyncTask"></a>五、AsyncTask</h2><h4 id="1-核心方法"><a href="#1-核心方法" class="headerlink" title="1. 核心方法"></a>1. 核心方法</h4><ul>
+<li>onPreExecute()</li>
+<li>doInBackground(Params…params)</li>
+<li>onProgressUpdate(Params…params)</li>
+<li>onPostExecute(Result result)</li>
+</ul>
+<p><strong>注意：</strong><br>（1）只有onProgressUpdate在线程池中执行，可以执行耗时任务；其他方法都是在主线程中。<br>（2）AsyncTask的类必须在主线程中加载；对象必须在主线程中创建；execute方法必须在UI线程中调用。<br>（3）不要在程序中直接调用4个核心方法<br>（4）一个AsyncTask对象只能执行一次，只能调用一次execute方法。<br>（5）Android 1.6之前，AsyncTask是串行执行的。之后的版本加入了并行执行。可以通过executeOnExecutor并行执行任务，但不建议。</p>
+<h4 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h4><p>　　AsyncTask内部封装了一个静态线程池，通过内部的InternalHandler在UI线程和子线程之间传递消息。</p>
+<h2 id="六、HandlerThread"><a href="#六、HandlerThread" class="headerlink" title="六、HandlerThread"></a>六、HandlerThread</h2><p>　　HandlerThread继承了Thread，同时它的内部创建了MessageQueue，可以进行Looper循环，是一个具有消息循环的线程。我们通过它可以直接使用Handler。</p>
+]]></content>
+      <categories>
+        <category>Android基础</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>详解Binder机制</title>
+    <url>/2020/02/27/%E8%AF%A6%E8%A7%A3Binder%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p>　　<strong>Binder机制</strong> 是Android中的一种跨进程的通信机制。</p>
+<a id="more"></a>
+
+<h2 id="一、IPC原理"><a href="#一、IPC原理" class="headerlink" title="一、IPC原理"></a>一、IPC原理</h2><p>　　从进程角度来看IPC（Interprocess Communication）机制：<br>    <img src="/images/img_ipc.jpg" alt="img_ipc"><br>　　每个Android的进程， 只能运行在自己进程所拥有的虚拟地址空间（<strong>进程隔离</strong>）。 <strong>对于用户空间， 不同进程之间是不能共享的， 而内核空间却是可共享的。</strong> Client进程向Server进程通信， 恰恰是利用进程间可共享的内核内存空间来完成底层通信工作的。 Client端与Server端进程往往采用ioctl（设备控制接口）等方法完成用户空间与内核空间的驱动进行交互。</p>
+<h2 id="二、为什么要使用Binder？"><a href="#二、为什么要使用Binder？" class="headerlink" title="二、为什么要使用Binder？"></a>二、为什么要使用Binder？</h2><h3 id="1-性能方面"><a href="#1-性能方面" class="headerlink" title="1. 性能方面"></a>1. 性能方面</h3><p>　　在Android设备上（性能受限制，比如要省电）， 广泛地使用跨进程通信对通信机制的性能有严格的要求， Binder相对于传统的Socket方式， 更加高效。 Binder数据拷贝只需要一次， 而管道、 消息队列、 Socket都需要两次， 而共享内存方式虽然一次内存拷贝都不需要， 但实现方式又比较复杂。</p>
+<h3 id="2-安全方面"><a href="#2-安全方面" class="headerlink" title="2. 安全方面"></a>2. 安全方面</h3><p>　　传统的进程通信方式对于通信双方的身份并没有做出严格的验证， 比如Socket通信的IP地址是客户端手动填入， 很容易进行伪造。 然而， Binder机制从协议本身就支持对通信双方做身份校检， 从而大大提升了安全性。</p>
+<h2 id="三、Binder原理"><a href="#三、Binder原理" class="headerlink" title="三、Binder原理"></a>三、Binder原理</h2><p>　　Binder通信采用<strong>C/S架构</strong>， 从组件视角来说， 包含<strong>Client、 Server、 ServiceManager以及Binder驱动</strong>， 其中ServiceManager用于管理系统中的各种服务。<br>架构图如下所示：<br><img src="/images/img_binder.jpg" alt="img_binder"></p>
+<h4 id="Binder通信的四个角色："><a href="#Binder通信的四个角色：" class="headerlink" title="Binder通信的四个角色："></a>Binder通信的四个角色：</h4><ul>
+<li>Client进程： 使用服务的进程。</li>
+<li>Server进程： 提供服务的进程。</li>
+<li>ServiceManager进程： ServiceManager的作用是将字符形式的<strong>Binder名字转化成Client中对该Binder的引用</strong>， 使得Client能够通过Binder名字获得对Server中Binder实体的引用(代理对象)。</li>
+<li>Binder驱动： 驱动负责进程之间Binder通信的建立。</li>
+</ul>
+<p><strong>注意：</strong><br>对于Service进程来说，Binder指的是Binder本地对象；<br>对于Client进程来说，Binder指的是Binder代理对象。</p>
+<h4 id="Binder运行机制："><a href="#Binder运行机制：" class="headerlink" title="Binder运行机制："></a>Binder运行机制：</h4><p>（1）<strong>注册服务</strong>： Server进程要先注册Service到ServiceManager。 该过程： Server是客户端， ServiceManager是服务端。<br>（2）<strong>获取服务</strong>： Client进程使用某个Service前， 须先向ServiceManager中获取相应的Service。 该过程： Client是客户端， ServiceManager是服务端。<br>（3）<strong>使用服务</strong>： Client根据得到的Service信息建立与Service所在的Server进程通信的通路， 然后就可以直接与Service交互。 该过程： Client是客户端， Server是服务端。</p>
+<h2 id="四、AIDL"><a href="#四、AIDL" class="headerlink" title="四、AIDL"></a>四、AIDL</h2><p>　　<strong>AIDL</strong> (Android Interface Definition Language) 是一种接口定义语言， 用于生成可以在Android设备上两个进程之间进行进程间通信(Interprocess Communication, IPC)的代码。 如果在一个进程中（ 例如Activity） 要调用另一个进程中（ 例如Service）对象的操作， 就可以使用AIDL生成可序列化的参数， 来完成进程间通信。<br>　　AIDL之所以能够实现进程间通信， 其内部是通过<strong>Binder机制</strong>来实现的。</p>
+<h4 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤:"></a>使用步骤:</h4><p>服务端：</p>
+<ul>
+<li>创建JavaBean，并实现进行序列化</li>
+<li>新建同名的AIDL文件，并在文件中声明JavaBean对象</li>
+<li>新建AIDL接口文件，并且在其中定义方法</li>
+<li>创建继承Service的自定义服务并重写onBind方法</li>
+<li>声明Stub类型变量（Binder类型），并实现接口方法</li>
+</ul>
+<p>客户端：</p>
+<ul>
+<li>将服务端中AIDL文件夹移植到客户端</li>
+<li>声明接口类型变量</li>
+<li>声明ServiceConnection类型变量，并完成bindService</li>
+<li>在serviceConnected方法中通过IBookManager.Stub.asInterface(service)获取接口对象</li>
+</ul>
+<p>　　这样就可以通过接口对象调用服务端接口中的定义的方法了。</p>
+]]></content>
+      <categories>
+        <category>Android基础</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android四大组件之ContentProvider</title>
+    <url>/2020/02/27/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BContentProvider/</url>
+    <content><![CDATA[<p>　　<strong>内容提供者（ContentProvider）</strong> 是用于在不同的应用程序之间实现数据共享的一种组件。它提供了一套完整的机制，允许一个程序访问另一个程序中的数据，同时还能保证被访数据的安全性。</p>
+<a id="more"></a>
+
+<h2 id="一、作用"><a href="#一、作用" class="headerlink" title="一、作用"></a>一、作用</h2><p>　　进程间进行数据的交互和共享，即跨进程通信（IPC）。<br><img src="/images/img_content_provider.jpg" alt="img_content_provider"></p>
+<h2 id="二、原理"><a href="#二、原理" class="headerlink" title="二、原理"></a>二、原理</h2><p>　　ContentProvider的底层是采用Android中的<strong>Binder机制</strong>。</p>
+<h2 id="三、用法"><a href="#三、用法" class="headerlink" title="三、用法"></a>三、用法</h2><h3 id="1-主要用法："><a href="#1-主要用法：" class="headerlink" title="1. 主要用法："></a>1. 主要用法：</h3><p>（1）使用现有的内容提供者来读取和操作现有的程序中的数据。<br>（2）创建自己的内容提供者给我们的程序提供外部访问接口。</p>
+]]></content>
+      <categories>
+        <category>Android基础</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android四大组件之BroadcastReceiver</title>
+    <url>/2020/02/27/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BBroadcastReceiver/</url>
+    <content><![CDATA[<p>　　<strong>广播接收者（BroadcastReceiver）</strong> 是Android中用于接收广播的一种组件。广播是一种广泛运用的在应用程序之间传递信息的机制。广播类似于Java中的观察者模式，广播的内容是一个携带信息的Intent。</p>
+<a id="more"></a>
+
+<h2 id="一、广播的分类"><a href="#一、广播的分类" class="headerlink" title="一、广播的分类"></a>一、广播的分类</h2><h3 id="1-按形式分："><a href="#1-按形式分：" class="headerlink" title="1. 按形式分："></a>1. 按形式分：</h3><ul>
+<li>标准广播：异步执行、没有先后顺序、效率高、无法被截断</li>
+<li>有序广播：同步执行、有先后顺序、效率低、可以被截断（前面的广播可以截断后面正在传递的广播）<h3 id="2-按级别分："><a href="#2-按级别分：" class="headerlink" title="2. 按级别分："></a>2. 按级别分：</h3></li>
+<li>普通广播：正常定义的广播（注意：广播是可以跨App直接通信的）</li>
+<li>系统广播：系统定义的广播</li>
+<li>本地广播：可理解为一种局部广播， 广播的发送者和接收者都同属于一个App。<br>相比于全局广播（普通广播），本地广播优势体现在：安全性高、效率高</li>
+<li>粘性广播：Intent会一直保留到广播事件结束，并且没有10秒限制。（10秒限制是指普通的广播如果onReceive方法执行时间太长，超过10秒的时候系统会将这个广播置为可以干掉的candidate，一旦系统资源不够的时候，就会干掉这个广播而让它不执行。）</li>
+</ul>
+<p><strong>注意：</strong><br>粘性广播在Android 5.0(API 21)中已弃用。</p>
+<h2 id="二、注册方式"><a href="#二、注册方式" class="headerlink" title="二、注册方式"></a>二、注册方式</h2><h3 id="1-动态注册"><a href="#1-动态注册" class="headerlink" title="1. 动态注册"></a>1. 动态注册</h3><p>（1）创建一个自定义的广播接收者，继承于BroadcastReceiver，并重写onReceive方法。<br>（2）在Activity中，通过registerReceiver方法注册广播接收者。</p>
+<ul>
+<li>非常驻型广播：跟随组件的生命周期，如果应用程序关闭，动态注册的广播就无法接收</li>
+<li>优先级较高</li>
+</ul>
+<p><strong>注意：</strong><br>1）在Activity生命周期结束前，记得注销广播接收者，否则会导致内存泄漏。<br>2）动态注册广播最好应该在onResume中注册、在onPause()中注销。</p>
+<h3 id="2-静态注册"><a href="#2-静态注册" class="headerlink" title="2. 静态注册"></a>2. 静态注册</h3><p>（1）创建一个自定义的广播接收者，继承于BroadcastReceiver，并重写onReceive方法。<br>（2）在AndroidManifest文件中，通过&lt;receiver&gt;标签注册广播接收者。</p>
+<ul>
+<li>常驻型广播：不受组件生命周期的影响，即使应用程序关闭，静态注册的广播仍能够接收</li>
+<li>优先级较低<br>缺点：耗电、占内存</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ol>
+<li><strong>Android 8.0以上版本，绝大部分的广播不能进行静态注册。</strong> 由于静态注册的方式非常的耗电，Google专门进行了优化。</li>
+<li><strong>不要在onReceive()方法中进行任何耗时操作。</strong> 由于，onReceive()方法运行在主线程中，耗时操作会导致ANR（通常是10秒）。</li>
+<li><strong>广播接收者不允许开启子线程</strong>，原因：</li>
+</ol>
+<ul>
+<li>对于静态注册的广播接收者来说，广播接收者对象的生命周期较短，执行完onReceive()方法就会变为垃圾对象而被回收。在子线程执行完之前，若对应的Activity退出，他们所在进程就变成了空进程(没有任何活动组件的进程)，系统需要内存时可能会优先终止该进程，进程被终止，其内的子线程也会被终止，导致子线程无法执行完。</li>
+<li>对于动态注册的广播接收者来说，Activity退出时会调用unregisteReceiver()方法执行解注册，此时广播接收者对象也会变成垃圾对象而被回收。在子线程执行完之前，对应的Activity退出，同样它们所在进程就变成了空进程，其内的子线程也无法执行完。</li>
+</ul>
+<ol start="4">
+<li><strong>如果必须执行耗时任务可以考虑，在onReceive中开启服务来执行。</strong> 系统就会认为这个进程里还有其他活动组件在运行，就不会任意时刻回收此进程。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Android基础</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>剑指Offer(六) 数学问题</title>
     <url>/2020/02/26/%E5%89%91%E6%8C%87Offer-6-%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<h3 id="11-二进制中1的个数"><a href="#11-二进制中1的个数" class="headerlink" title="11. 二进制中1的个数"></a>11. 二进制中1的个数</h3><p><strong><em>题目描述：</em></strong><br>输入一个整数，输出概述二进制表示中1的个数，其中负数用补码表示<br>时间限制：1秒 空间限制：32768K</p>
@@ -107,9 +258,10 @@
   <entry>
     <title>Android四大组件之Service</title>
     <url>/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BService/</url>
-    <content><![CDATA[<p>　　<strong>服务（Service）</strong> 是一种可以在后台执行长时间运行操作而没有用户界面的应用组件。<br>　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。
+    <content><![CDATA[<p>　　<strong>服务（Service）</strong> 是一种可以在后台执行长时间运行操作而没有用户界面的组件。<br>　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。
 　　</p>
 <a id="more"></a>
+
 <p><strong>注意：</strong></p>
 <ol>
 <li><strong>Service默认运行在UI线程（主线程）中， 因此， 不要在Service中执行耗时的操作。</strong>　除非在Service中创建子线程。</li>
@@ -119,7 +271,9 @@
 <h3 id="1-startService-stopService"><a href="#1-startService-stopService" class="headerlink" title="1.startService / stopService"></a>1.startService / stopService</h3><p><strong>生命周期顺序： onCreate-&gt;onStartCommand-&gt;onDestroy</strong><br>　　如果一个Service被某个Activity 调用 Context.startService方法启动， 那么不管是否有Activity使用bindService绑定或unbindService解除绑定到该Service， 该Service都在后台运行， 直到被调用stopService， 或自身的stopSelf方法。 当然如果系统资源不足， android系统也可能结束服务， 还有一种方法可以关闭服务， 在设置中， 通过应用-&gt;找到自己应用-&gt;停止。<br><strong>注意点：</strong><br>①第一次 startService 会触发 onCreate 和 onStartCommand， 以后在服务运行过程中， 每次 startService 都<strong>只会触发 onStartCommand</strong><br>②不论 startService 多少次， stopService 一次就会停止服务</p>
 <h3 id="2-bindService-unbindService"><a href="#2-bindService-unbindService" class="headerlink" title="2.bindService / unbindService"></a>2.bindService / unbindService</h3><p><strong>生命周期顺序： onCreate-&gt;onBind-&gt;onUnBind-&gt;onDestroy</strong><br>　　如果一个Service在某个Activity中被调用bindService方法启动， 不论bindService被调用几次， Service的onCreate方法只会执行一次， 同时onStartCommand方法始终不会调用。<br>当建立连接后， Service会一直运行， 除非调用unbindService来接触绑定、 断开连接或调用该Service的Context不存在了（如Activity被Finish——即<strong>通过bindService启动的Service的生命周期依附于启动它的Context</strong>）， 系统在这时会自动停止该Service。<br><strong>注意点：</strong><br>第一次 bindService 会触发 onCreate 和 onBind， 以后在服务运行过程中， 每次 bindService 都<strong>不会触发任何回调</strong></p>
 <h3 id="3-混合型（上面两种方式的交互）"><a href="#3-混合型（上面两种方式的交互）" class="headerlink" title="3.混合型（上面两种方式的交互）"></a>3.混合型（上面两种方式的交互）</h3><p>　　当一个Service在被启动(startService)的同时又被绑定(bindService)， 该Service将会一直在后台运行， 并且不管调用几次， onCreate方法始终只会调用一次， onStartCommand的调用次数与startService调用的次数一致（使用bindService方法不会调用onStartCommand）。 同时， 调用unBindService将不会停止Service， 必须调用stopService或Service自身的stopSelf来停止服务。</p>
-<h2 id="二、类型"><a href="#二、类型" class="headerlink" title="二、类型"></a>二、类型</h2><h3 id="1-按运行位置："><a href="#1-按运行位置：" class="headerlink" title="1. 按运行位置："></a>1. 按运行位置：</h3><ul>
+<h2 id="二、启动方式"><a href="#二、启动方式" class="headerlink" title="二、启动方式"></a>二、启动方式</h2><h3 id="1-startService"><a href="#1-startService" class="headerlink" title="1. startService"></a>1. startService</h3><p>首先，在AndroidManifest文件中进行注册。<br>(1)服务端，创建BindService并继承自Service。<br>(2)客户端，通过startService()方法启动服务。</p>
+<h3 id="2-bindService"><a href="#2-bindService" class="headerlink" title="2. bindService"></a>2. bindService</h3><p>首先，在AndroidManifest文件中进行注册。<br>(1)服务端，创建BindService并继承自Service；创建一个实现IBindler接口的实例对象，并提供公共方法给客户端调用；从onBind()回调方法返回此Binder实例。<br>(2)客户端，创建一个ServiceConnection对象，并在其onServiceConnected()回调方法中接收Binder对象；然后通过bindService()方法绑定服务。</p>
+<h2 id="三、类型"><a href="#三、类型" class="headerlink" title="三、类型"></a>三、类型</h2><h3 id="1-按运行位置："><a href="#1-按运行位置：" class="headerlink" title="1. 按运行位置："></a>1. 按运行位置：</h3><ul>
 <li>本地服务（Local Service）：服务依附于主进程</li>
 <li>远程服务（Remote Service）：服务为独立的进程<h3 id="2-按运行类型："><a href="#2-按运行类型：" class="headerlink" title="2. 按运行类型："></a>2. 按运行类型：</h3></li>
 <li>前台服务：通知栏显示Notification，如天气更新、日期同步等</li>
@@ -128,7 +282,7 @@
 <li>bindService启动的服务</li>
 <li>同时用两种方式启动的服务</li>
 </ul>
-<h2 id="三、Service和Thread的区别"><a href="#三、Service和Thread的区别" class="headerlink" title="三、Service和Thread的区别"></a>三、Service和Thread的区别</h2><p>　　本质上来说，两者没有任何关系，它们是完全不同的概念。</p>
+<h2 id="四、Service和Thread的区别"><a href="#四、Service和Thread的区别" class="headerlink" title="四、Service和Thread的区别"></a>四、Service和Thread的区别</h2><p>　　本质上来说，两者没有任何关系，它们是完全不同的概念。</p>
 <ol>
 <li>定义上：</li>
 </ol>
@@ -144,7 +298,7 @@
 <li>所有的Activity都可以与Service进行关联，也就是说多个Activity可以同时控制同一个Service，然后可以很方便地操作其中的方法，即使Activity被销毁了，之后只要重新与Service建立关联，就又能够获取到原有的Service中Binder的实例。因此，使用Service来处理后台任务，Activity就可以放心地finish，完全不需要担心无法对后台任务进行控制的情况。</li>
 </ul>
 <p><strong>什么时候使用Service，什么时候使用Thread呢?</strong><br>（1）在应用中，如果是<strong>长时间的在后台运行，而且不需要交互</strong>的情况下，使用<strong>Service</strong>。<br>（2）在后台运行，不需要交互的情况下，如果只是完成某个任务，之后就不需要运行，而且可能是多个任务，需要长时间运行的情况下，使用<strong>Thread</strong>。<br>（3）如果任务占用CPU时间多，资源大的情况下，使用<strong>Thread</strong>。</p>
-<h2 id="四、IntentService"><a href="#四、IntentService" class="headerlink" title="四、IntentService"></a>四、IntentService</h2><p> 　　继承于Service，内部有一个HandlerThread对象，可以看做是Service和HandlerThread的结合体。</p>
+<h2 id="五、IntentService"><a href="#五、IntentService" class="headerlink" title="五、IntentService"></a>五、IntentService</h2><p> 　　继承于Service，内部有一个HandlerThread对象，可以看做是Service和HandlerThread的结合体。</p>
 <h3 id="1-特点："><a href="#1-特点：" class="headerlink" title="1. 特点："></a>1. 特点：</h3><ul>
 <li>在IntentService<strong>内有一个工作线程</strong>来处理耗时操作。</li>
 <li>当任务执行完后，IntentService 会自动停止，不需要我们去手动结束。</li>

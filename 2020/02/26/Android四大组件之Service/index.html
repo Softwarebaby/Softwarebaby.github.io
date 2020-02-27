@@ -81,16 +81,16 @@
 
 
 
-<meta name="description" content="服务（Service） 是一种可以在后台执行长时间运行操作而没有用户界面的应用组件。　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。">
+<meta name="description" content="服务（Service） 是一种可以在后台执行长时间运行操作而没有用户界面的组件。　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android四大组件之Service">
 <meta property="og:url" content="https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BService/index.html">
 <meta property="og:site_name" content="Flow Garden">
-<meta property="og:description" content="服务（Service） 是一种可以在后台执行长时间运行操作而没有用户界面的应用组件。　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。">
+<meta property="og:description" content="服务（Service） 是一种可以在后台执行长时间运行操作而没有用户界面的组件。　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。">
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_service_life_cycle.png">
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_service_intent_service.jpg">
 <meta property="article:published_time" content="2020-02-26T09:33:00.000Z">
-<meta property="article:modified_time" content="2020-02-27T03:11:38.053Z">
+<meta property="article:modified_time" content="2020-02-27T08:21:25.698Z">
 <meta property="article:author" content="Bob Du">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -395,7 +395,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.6k
+                  1.7k
                 </span>
               
 
@@ -411,7 +411,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  6
                 </span>
               
             </div>
@@ -432,9 +432,10 @@
       
 
       
-        <p>　　<strong>服务（Service）</strong> 是一种可以在后台执行长时间运行操作而没有用户界面的应用组件。<br>　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。
+        <p>　　<strong>服务（Service）</strong> 是一种可以在后台执行长时间运行操作而没有用户界面的组件。<br>　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。
 　　</p>
 <a id="more"></a>
+
 <p><strong>注意：</strong></p>
 <ol>
 <li><strong>Service默认运行在UI线程（主线程）中， 因此， 不要在Service中执行耗时的操作。</strong>　除非在Service中创建子线程。</li>
@@ -444,7 +445,9 @@
 <h3 id="1-startService-stopService"><a href="#1-startService-stopService" class="headerlink" title="1.startService / stopService"></a>1.startService / stopService</h3><p><strong>生命周期顺序： onCreate-&gt;onStartCommand-&gt;onDestroy</strong><br>　　如果一个Service被某个Activity 调用 Context.startService方法启动， 那么不管是否有Activity使用bindService绑定或unbindService解除绑定到该Service， 该Service都在后台运行， 直到被调用stopService， 或自身的stopSelf方法。 当然如果系统资源不足， android系统也可能结束服务， 还有一种方法可以关闭服务， 在设置中， 通过应用-&gt;找到自己应用-&gt;停止。<br><strong>注意点：</strong><br>①第一次 startService 会触发 onCreate 和 onStartCommand， 以后在服务运行过程中， 每次 startService 都<strong>只会触发 onStartCommand</strong><br>②不论 startService 多少次， stopService 一次就会停止服务</p>
 <h3 id="2-bindService-unbindService"><a href="#2-bindService-unbindService" class="headerlink" title="2.bindService / unbindService"></a>2.bindService / unbindService</h3><p><strong>生命周期顺序： onCreate-&gt;onBind-&gt;onUnBind-&gt;onDestroy</strong><br>　　如果一个Service在某个Activity中被调用bindService方法启动， 不论bindService被调用几次， Service的onCreate方法只会执行一次， 同时onStartCommand方法始终不会调用。<br>当建立连接后， Service会一直运行， 除非调用unbindService来接触绑定、 断开连接或调用该Service的Context不存在了（如Activity被Finish——即<strong>通过bindService启动的Service的生命周期依附于启动它的Context</strong>）， 系统在这时会自动停止该Service。<br><strong>注意点：</strong><br>第一次 bindService 会触发 onCreate 和 onBind， 以后在服务运行过程中， 每次 bindService 都<strong>不会触发任何回调</strong></p>
 <h3 id="3-混合型（上面两种方式的交互）"><a href="#3-混合型（上面两种方式的交互）" class="headerlink" title="3.混合型（上面两种方式的交互）"></a>3.混合型（上面两种方式的交互）</h3><p>　　当一个Service在被启动(startService)的同时又被绑定(bindService)， 该Service将会一直在后台运行， 并且不管调用几次， onCreate方法始终只会调用一次， onStartCommand的调用次数与startService调用的次数一致（使用bindService方法不会调用onStartCommand）。 同时， 调用unBindService将不会停止Service， 必须调用stopService或Service自身的stopSelf来停止服务。</p>
-<h2 id="二、类型"><a href="#二、类型" class="headerlink" title="二、类型"></a>二、类型</h2><h3 id="1-按运行位置："><a href="#1-按运行位置：" class="headerlink" title="1. 按运行位置："></a>1. 按运行位置：</h3><ul>
+<h2 id="二、启动方式"><a href="#二、启动方式" class="headerlink" title="二、启动方式"></a>二、启动方式</h2><h3 id="1-startService"><a href="#1-startService" class="headerlink" title="1. startService"></a>1. startService</h3><p>首先，在AndroidManifest文件中进行注册。<br>(1)服务端，创建BindService并继承自Service。<br>(2)客户端，通过startService()方法启动服务。</p>
+<h3 id="2-bindService"><a href="#2-bindService" class="headerlink" title="2. bindService"></a>2. bindService</h3><p>首先，在AndroidManifest文件中进行注册。<br>(1)服务端，创建BindService并继承自Service；创建一个实现IBindler接口的实例对象，并提供公共方法给客户端调用；从onBind()回调方法返回此Binder实例。<br>(2)客户端，创建一个ServiceConnection对象，并在其onServiceConnected()回调方法中接收Binder对象；然后通过bindService()方法绑定服务。</p>
+<h2 id="三、类型"><a href="#三、类型" class="headerlink" title="三、类型"></a>三、类型</h2><h3 id="1-按运行位置："><a href="#1-按运行位置：" class="headerlink" title="1. 按运行位置："></a>1. 按运行位置：</h3><ul>
 <li>本地服务（Local Service）：服务依附于主进程</li>
 <li>远程服务（Remote Service）：服务为独立的进程<h3 id="2-按运行类型："><a href="#2-按运行类型：" class="headerlink" title="2. 按运行类型："></a>2. 按运行类型：</h3></li>
 <li>前台服务：通知栏显示Notification，如天气更新、日期同步等</li>
@@ -453,7 +456,7 @@
 <li>bindService启动的服务</li>
 <li>同时用两种方式启动的服务</li>
 </ul>
-<h2 id="三、Service和Thread的区别"><a href="#三、Service和Thread的区别" class="headerlink" title="三、Service和Thread的区别"></a>三、Service和Thread的区别</h2><p>　　本质上来说，两者没有任何关系，它们是完全不同的概念。</p>
+<h2 id="四、Service和Thread的区别"><a href="#四、Service和Thread的区别" class="headerlink" title="四、Service和Thread的区别"></a>四、Service和Thread的区别</h2><p>　　本质上来说，两者没有任何关系，它们是完全不同的概念。</p>
 <ol>
 <li>定义上：</li>
 </ol>
@@ -469,7 +472,7 @@
 <li>所有的Activity都可以与Service进行关联，也就是说多个Activity可以同时控制同一个Service，然后可以很方便地操作其中的方法，即使Activity被销毁了，之后只要重新与Service建立关联，就又能够获取到原有的Service中Binder的实例。因此，使用Service来处理后台任务，Activity就可以放心地finish，完全不需要担心无法对后台任务进行控制的情况。</li>
 </ul>
 <p><strong>什么时候使用Service，什么时候使用Thread呢?</strong><br>（1）在应用中，如果是<strong>长时间的在后台运行，而且不需要交互</strong>的情况下，使用<strong>Service</strong>。<br>（2）在后台运行，不需要交互的情况下，如果只是完成某个任务，之后就不需要运行，而且可能是多个任务，需要长时间运行的情况下，使用<strong>Thread</strong>。<br>（3）如果任务占用CPU时间多，资源大的情况下，使用<strong>Thread</strong>。</p>
-<h2 id="四、IntentService"><a href="#四、IntentService" class="headerlink" title="四、IntentService"></a>四、IntentService</h2><p> 　　继承于Service，内部有一个HandlerThread对象，可以看做是Service和HandlerThread的结合体。</p>
+<h2 id="五、IntentService"><a href="#五、IntentService" class="headerlink" title="五、IntentService"></a>五、IntentService</h2><p> 　　继承于Service，内部有一个HandlerThread对象，可以看做是Service和HandlerThread的结合体。</p>
 <h3 id="1-特点："><a href="#1-特点：" class="headerlink" title="1. 特点："></a>1. 特点：</h3><ul>
 <li>在IntentService<strong>内有一个工作线程</strong>来处理耗时操作。</li>
 <li>当任务执行完后，IntentService 会自动停止，不需要我们去手动结束。</li>
@@ -704,7 +707,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -808,7 +811,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、生命周期"><span class="nav-number">1.</span> <span class="nav-text">一、生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-startService-stopService"><span class="nav-number">1.1.</span> <span class="nav-text">1.startService &#x2F; stopService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-bindService-unbindService"><span class="nav-number">1.2.</span> <span class="nav-text">2.bindService &#x2F; unbindService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-混合型（上面两种方式的交互）"><span class="nav-number">1.3.</span> <span class="nav-text">3.混合型（上面两种方式的交互）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、类型"><span class="nav-number">2.</span> <span class="nav-text">二、类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-按运行位置："><span class="nav-number">2.1.</span> <span class="nav-text">1. 按运行位置：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-按运行类型："><span class="nav-number">2.2.</span> <span class="nav-text">2. 按运行类型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-按启动方式："><span class="nav-number">2.3.</span> <span class="nav-text">3. 按启动方式：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、Service和Thread的区别"><span class="nav-number">3.</span> <span class="nav-text">三、Service和Thread的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、IntentService"><span class="nav-number">4.</span> <span class="nav-text">四、IntentService</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-特点："><span class="nav-number">4.1.</span> <span class="nav-text">1. 特点：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-工作流程"><span class="nav-number">4.2.</span> <span class="nav-text">2. 工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-使用场景"><span class="nav-number">4.3.</span> <span class="nav-text">3. 使用场景</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、生命周期"><span class="nav-number">1.</span> <span class="nav-text">一、生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-startService-stopService"><span class="nav-number">1.1.</span> <span class="nav-text">1.startService &#x2F; stopService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-bindService-unbindService"><span class="nav-number">1.2.</span> <span class="nav-text">2.bindService &#x2F; unbindService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-混合型（上面两种方式的交互）"><span class="nav-number">1.3.</span> <span class="nav-text">3.混合型（上面两种方式的交互）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、启动方式"><span class="nav-number">2.</span> <span class="nav-text">二、启动方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-startService"><span class="nav-number">2.1.</span> <span class="nav-text">1. startService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-bindService"><span class="nav-number">2.2.</span> <span class="nav-text">2. bindService</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、类型"><span class="nav-number">3.</span> <span class="nav-text">三、类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-按运行位置："><span class="nav-number">3.1.</span> <span class="nav-text">1. 按运行位置：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-按运行类型："><span class="nav-number">3.2.</span> <span class="nav-text">2. 按运行类型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-按启动方式："><span class="nav-number">3.3.</span> <span class="nav-text">3. 按启动方式：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、Service和Thread的区别"><span class="nav-number">4.</span> <span class="nav-text">四、Service和Thread的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、IntentService"><span class="nav-number">5.</span> <span class="nav-text">五、IntentService</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-特点："><span class="nav-number">5.1.</span> <span class="nav-text">1. 特点：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-工作流程"><span class="nav-number">5.2.</span> <span class="nav-text">2. 工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-使用场景"><span class="nav-number">5.3.</span> <span class="nav-text">3. 使用场景</span></a></li></ol></li></ol></div>
             
 
           </div>
