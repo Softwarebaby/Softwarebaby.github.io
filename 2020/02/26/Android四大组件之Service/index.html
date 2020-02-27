@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="算法," />
+  <meta name="keywords" content="Android," />
 
 
 
@@ -81,17 +81,20 @@
 
 
 
-<meta name="description" content="5. 用两个栈实现队列题目描述用两个栈来实现一个队列，完成队列的Push和Pop操作。 队列中的元素为int类型。时间限制：1秒 空间限制：32768K本题知识点： 队列 栈">
+<meta name="description" content="服务（Service） 是一种可以在后台执行长时间运行操作而没有用户界面的应用组件。　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="剑指Offer(三) 栈和队列">
-<meta property="og:url" content="https://lvmdu.gitee.io/2020/02/26/%E5%89%91%E6%8C%87Offer-3-%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/index.html">
+<meta property="og:title" content="Android四大组件之Service">
+<meta property="og:url" content="https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BService/index.html">
 <meta property="og:site_name" content="Flow Garden">
-<meta property="og:description" content="5. 用两个栈实现队列题目描述用两个栈来实现一个队列，完成队列的Push和Pop操作。 队列中的元素为int类型。时间限制：1秒 空间限制：32768K本题知识点： 队列 栈">
-<meta property="article:published_time" content="2020-02-26T11:54:00.000Z">
-<meta property="article:modified_time" content="2020-02-26T13:27:49.224Z">
+<meta property="og:description" content="服务（Service） 是一种可以在后台执行长时间运行操作而没有用户界面的应用组件。　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_service_life_cycle.png">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_service_intent_service.jpg">
+<meta property="article:published_time" content="2020-02-26T09:33:00.000Z">
+<meta property="article:modified_time" content="2020-02-27T03:11:38.053Z">
 <meta property="article:author" content="Bob Du">
-<meta property="article:tag" content="算法">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lvmdu.gitee.io/images/img_service_life_cycle.png">
 
 
 
@@ -121,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="https://lvmdu.gitee.io/2020/02/26/剑指Offer-3-栈和队列/"/>
+  <link rel="canonical" href="https://lvmdu.gitee.io/2020/02/26/Android四大组件之Service/"/>
 
 
 
 
 
-  <title>剑指Offer(三) 栈和队列 | Flow Garden</title>
+  <title>Android四大组件之Service | Flow Garden</title>
   
 
 
@@ -304,7 +307,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://lvmdu.gitee.io/2020/02/26/%E5%89%91%E6%8C%87Offer-3-%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/">
+    <link itemprop="mainEntityOfPage" href="https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BService/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Bob Du">
@@ -321,7 +324,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">剑指Offer(三) 栈和队列</h1>
+          <h1 class="post-title" itemprop="name headline">Android四大组件之Service</h1>
         
 
         <div class="post-meta">
@@ -333,7 +336,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-26T19:54:00+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-26T17:33:00+08:00">
                 2020-02-26
               </time>
             
@@ -356,8 +359,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%89%91%E6%8C%87Offer/" itemprop="url" rel="index">
-                    <span itemprop="name">剑指Offer</span>
+                  <a href="/categories/Android%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
+                    <span itemprop="name">Android基础</span>
                   </a>
                 </span>
 
@@ -392,7 +395,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  601
+                  1.6k
                 </span>
               
 
@@ -408,7 +411,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  5
                 </span>
               
             </div>
@@ -429,16 +432,60 @@
       
 
       
-        <h3 id="5-用两个栈实现队列"><a href="#5-用两个栈实现队列" class="headerlink" title="5. 用两个栈实现队列"></a>5. 用两个栈实现队列</h3><p><strong><em>题目描述</em></strong><br>用两个栈来实现一个队列，完成队列的Push和Pop操作。 队列中的元素为int类型。<br>时间限制：1秒 空间限制：32768K<br>本题知识点： 队列 栈</p>
+        <p>　　<strong>服务（Service）</strong> 是一种可以在后台执行长时间运行操作而没有用户界面的应用组件。<br>　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。
+　　</p>
 <a id="more"></a>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    Stack&lt;Integer&gt; stack1 = <span class="keyword">new</span> Stack&lt;Integer&gt;();</span><br><span class="line">    Stack&lt;Integer&gt; stack2 = <span class="keyword">new</span> Stack&lt;Integer&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(<span class="keyword">int</span> node)</span> </span>&#123;</span><br><span class="line">        stack1.push(node);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (stack2.empty()) &#123;</span><br><span class="line">            <span class="keyword">while</span> (!stack1.empty()) &#123;</span><br><span class="line">                stack2.push(stack1.pop());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> stack2.pop();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="20-包含min函数的栈"><a href="#20-包含min函数的栈" class="headerlink" title="20. 包含min函数的栈"></a>20. 包含min函数的栈</h3><p><strong><em>题目描述</em></strong><br>定义栈的数据结构，请在该类型中实现一个能够得到栈最小元素的min函数。<br>时间限制：1秒 空间限制：32768K<br>本题知识点： 栈</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    Stack&lt;Integer&gt; st = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">    Stack&lt;Integer&gt; smin = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(<span class="keyword">int</span> node)</span> </span>&#123;</span><br><span class="line">        st.push(node);</span><br><span class="line">        <span class="keyword">if</span> (smin.empty()) &#123;</span><br><span class="line">            smin.push(node);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (node &lt; smin.peek()) &#123;</span><br><span class="line">            smin.push(node);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (st.peek() == smin.peek()) &#123;</span><br><span class="line">            smin.pop();</span><br><span class="line">        &#125;</span><br><span class="line">        st.pop();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">top</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> st.peek();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">min</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> smin.peek();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="21-栈的压入、弹出序列"><a href="#21-栈的压入、弹出序列" class="headerlink" title="21. 栈的压入、弹出序列"></a>21. 栈的压入、弹出序列</h3><p><strong><em>题目描述</em></strong><br>输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否为该栈的弹出顺序。<br>假设压入栈的所有数字均不相等。例如序列1,2,3,4,5是某栈的压入顺序，序列4,5,3,2,1是该压栈序列对应的一个弹出序列，<br>但4,3,5,1,2就不可能是该压栈序列的弹出序列。（注意：这两个序列的长度是相等的）<br>时间限制：1秒 空间限制：32768K<br>本题知识点： 栈</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 方法1：使用栈</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pushA</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> popA</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">IsPopOrder</span><span class="params">(<span class="keyword">int</span> [] pushA,<span class="keyword">int</span> [] popA)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pushA == <span class="keyword">null</span> || popA == <span class="keyword">null</span> || pushA.length == <span class="number">0</span> || popA.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Stack&lt;Integer&gt; stack = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; pushA.length; i++) &#123;</span><br><span class="line">            stack.push(pushA[i]);</span><br><span class="line">            <span class="keyword">while</span> (stack.size() &gt; <span class="number">0</span> &amp;&amp; stack.peek() == popA[j]) &#123;</span><br><span class="line">                stack.pop();</span><br><span class="line">                j++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> stack.isEmpty();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 不使用栈</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pushA</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> popA</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">IsPopOrder1</span><span class="params">(<span class="keyword">int</span> [] pushA,<span class="keyword">int</span> [] popA)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pushA == <span class="keyword">null</span> || popA == <span class="keyword">null</span> || pushA.length == <span class="number">0</span> || popA.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        ArrayList&lt;Integer&gt; arrayList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; pushA.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (pushA[i] != popA[j]) &#123;</span><br><span class="line">                arrayList.add(pushA[i]);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                j++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = arrayList.size() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (arrayList.get(i) != popA[j]) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            j++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong></p>
+<ol>
+<li><strong>Service默认运行在UI线程（主线程）中， 因此， 不要在Service中执行耗时的操作。</strong>　除非在Service中创建子线程。</li>
+<li>Android的后台就是指它的运行是完全不依赖UI（线程）。即使Activity被销毁，或者程序被关闭，只要进程还在，Service就可以继续运行。</li>
+</ol>
+<h2 id="一、生命周期"><a href="#一、生命周期" class="headerlink" title="一、生命周期"></a>一、生命周期</h2><p><img src="/images/img_service_life_cycle.png" alt="img_service_life_cycle"></p>
+<h3 id="1-startService-stopService"><a href="#1-startService-stopService" class="headerlink" title="1.startService / stopService"></a>1.startService / stopService</h3><p><strong>生命周期顺序： onCreate-&gt;onStartCommand-&gt;onDestroy</strong><br>　　如果一个Service被某个Activity 调用 Context.startService方法启动， 那么不管是否有Activity使用bindService绑定或unbindService解除绑定到该Service， 该Service都在后台运行， 直到被调用stopService， 或自身的stopSelf方法。 当然如果系统资源不足， android系统也可能结束服务， 还有一种方法可以关闭服务， 在设置中， 通过应用-&gt;找到自己应用-&gt;停止。<br><strong>注意点：</strong><br>①第一次 startService 会触发 onCreate 和 onStartCommand， 以后在服务运行过程中， 每次 startService 都<strong>只会触发 onStartCommand</strong><br>②不论 startService 多少次， stopService 一次就会停止服务</p>
+<h3 id="2-bindService-unbindService"><a href="#2-bindService-unbindService" class="headerlink" title="2.bindService / unbindService"></a>2.bindService / unbindService</h3><p><strong>生命周期顺序： onCreate-&gt;onBind-&gt;onUnBind-&gt;onDestroy</strong><br>　　如果一个Service在某个Activity中被调用bindService方法启动， 不论bindService被调用几次， Service的onCreate方法只会执行一次， 同时onStartCommand方法始终不会调用。<br>当建立连接后， Service会一直运行， 除非调用unbindService来接触绑定、 断开连接或调用该Service的Context不存在了（如Activity被Finish——即<strong>通过bindService启动的Service的生命周期依附于启动它的Context</strong>）， 系统在这时会自动停止该Service。<br><strong>注意点：</strong><br>第一次 bindService 会触发 onCreate 和 onBind， 以后在服务运行过程中， 每次 bindService 都<strong>不会触发任何回调</strong></p>
+<h3 id="3-混合型（上面两种方式的交互）"><a href="#3-混合型（上面两种方式的交互）" class="headerlink" title="3.混合型（上面两种方式的交互）"></a>3.混合型（上面两种方式的交互）</h3><p>　　当一个Service在被启动(startService)的同时又被绑定(bindService)， 该Service将会一直在后台运行， 并且不管调用几次， onCreate方法始终只会调用一次， onStartCommand的调用次数与startService调用的次数一致（使用bindService方法不会调用onStartCommand）。 同时， 调用unBindService将不会停止Service， 必须调用stopService或Service自身的stopSelf来停止服务。</p>
+<h2 id="二、类型"><a href="#二、类型" class="headerlink" title="二、类型"></a>二、类型</h2><h3 id="1-按运行位置："><a href="#1-按运行位置：" class="headerlink" title="1. 按运行位置："></a>1. 按运行位置：</h3><ul>
+<li>本地服务（Local Service）：服务依附于主进程</li>
+<li>远程服务（Remote Service）：服务为独立的进程<h3 id="2-按运行类型："><a href="#2-按运行类型：" class="headerlink" title="2. 按运行类型："></a>2. 按运行类型：</h3></li>
+<li>前台服务：通知栏显示Notification，如天气更新、日期同步等</li>
+<li>后台服务：通知栏不显示Notification，如音乐播放器<h3 id="3-按启动方式："><a href="#3-按启动方式：" class="headerlink" title="3. 按启动方式："></a>3. 按启动方式：</h3></li>
+<li>startService启动的服务</li>
+<li>bindService启动的服务</li>
+<li>同时用两种方式启动的服务</li>
+</ul>
+<h2 id="三、Service和Thread的区别"><a href="#三、Service和Thread的区别" class="headerlink" title="三、Service和Thread的区别"></a>三、Service和Thread的区别</h2><p>　　本质上来说，两者没有任何关系，它们是完全不同的概念。</p>
+<ol>
+<li>定义上：</li>
+</ol>
+<ul>
+<li>Thread：Thread是程序执行的最小单元，它是分配CPU的基本单位。可以用Thread来执行一些异步的操作。</li>
+<li>Service：Service是android的一种机制，当它运行的时候如果是Local Service，那么对应的Service是运行在<strong>主进程的主线程上</strong>；如果是Remote Service，那么对应的Service则是运行在<strong>独立进程的主线程上</strong>。</li>
+</ul>
+<ol start="2">
+<li>使用上：</li>
+</ol>
+<ul>
+<li>Thread的运行是独立的，也就是说当一个Activity被finish之后，如果没有主动停止Thread或者Thread里的run方法没有执行完毕的话，Thread也会一直执行。 这样会导致的问题：1) 当Activity被finish之后，不再持有该Thread的引用，也就是不能再控制该Thread。2）没有办法在不同的Activity中对同一Thread进行控制。</li>
+<li>所有的Activity都可以与Service进行关联，也就是说多个Activity可以同时控制同一个Service，然后可以很方便地操作其中的方法，即使Activity被销毁了，之后只要重新与Service建立关联，就又能够获取到原有的Service中Binder的实例。因此，使用Service来处理后台任务，Activity就可以放心地finish，完全不需要担心无法对后台任务进行控制的情况。</li>
+</ul>
+<p><strong>什么时候使用Service，什么时候使用Thread呢?</strong><br>（1）在应用中，如果是<strong>长时间的在后台运行，而且不需要交互</strong>的情况下，使用<strong>Service</strong>。<br>（2）在后台运行，不需要交互的情况下，如果只是完成某个任务，之后就不需要运行，而且可能是多个任务，需要长时间运行的情况下，使用<strong>Thread</strong>。<br>（3）如果任务占用CPU时间多，资源大的情况下，使用<strong>Thread</strong>。</p>
+<h2 id="四、IntentService"><a href="#四、IntentService" class="headerlink" title="四、IntentService"></a>四、IntentService</h2><p> 　　继承于Service，内部有一个HandlerThread对象，可以看做是Service和HandlerThread的结合体。</p>
+<h3 id="1-特点："><a href="#1-特点：" class="headerlink" title="1. 特点："></a>1. 特点：</h3><ul>
+<li>在IntentService<strong>内有一个工作线程</strong>来处理耗时操作。</li>
+<li>当任务执行完后，IntentService 会自动停止，不需要我们去手动结束。</li>
+<li>如果启动 IntentService 多次，那么每一个耗时操作会以工作队列的方式在 IntentService 的 onHandleIntent 回调方法中执行，依次去执行，使用串行的方式，执行完自动结束。</li>
+</ul>
+<h3 id="2-工作流程"><a href="#2-工作流程" class="headerlink" title="2. 工作流程"></a>2. 工作流程</h3><p><img src="/images/img_service_intent_service.jpg" alt="img_service_intent_service"></p>
+<p> <strong>注意：</strong> 若启动IntentService多次， 那么每个耗时操作则以队列的方式在IntentService的onHandleIntent回调方法中依次执行， 执行完自动结束。</p>
+<p> <strong>启动IntentService为什么不需要新建线程？</strong><br>　　IntentService内部的HandlerThread继承自Thread，内部封装了Looper，在这里新建线程并启动，所以启动IntentService不需要新建线程。</p>
+<p><strong>为什么多次启动 IntentService 会顺序执行事件，停止服务后，后续的事件得不到执行？</strong><br>　　IntentService 中使用的 Handler、Looper、MessageQueue 机制把消息发送到线程中去执行的，所以<strong>多次启动IntentService不会重新创建新的服务和新的线程</strong>，只是把消息加入消息队列中等待执行，而如果服务停止，会清除消息队列中的消息，后续的事件得不到执行。</p>
+<h3 id="3-使用场景"><a href="#3-使用场景" class="headerlink" title="3. 使用场景"></a>3. 使用场景</h3><ul>
+<li>线程任务需要按顺序、 在后台执行的使用场景</li>
+</ul>
+<p><em>最常见的场景：离线下载</em></p>
+<ul>
+<li>由于所有的任务都在同一个Thread looper里面来做， 所以不符合多个数据同时请求的场景。</li>
+</ul>
 
       
     </div>
@@ -498,7 +545,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://lvmdu.gitee.io/2020/02/26/%E5%89%91%E6%8C%87Offer-3-%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/" title="剑指Offer(三) 栈和队列">https://lvmdu.gitee.io/2020/02/26/%E5%89%91%E6%8C%87Offer-3-%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/</a>
+    <a href="https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BService/" title="Android四大组件之Service">https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BService/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -513,7 +560,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
           
         </div>
       
@@ -526,8 +573,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BService/" rel="next" title="Android四大组件之Service">
-                <i class="fa fa-chevron-left"></i> Android四大组件之Service
+              <a href="/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BActivity/" rel="next" title="Android四大组件之Activity">
+                <i class="fa fa-chevron-left"></i> Android四大组件之Activity
               </a>
             
           </div>
@@ -536,8 +583,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/02/26/%E5%89%91%E6%8C%87Offer-4-%E6%A0%91/" rel="prev" title="剑指Offer(四) 树">
-                剑指Offer(四) 树 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/02/26/%E5%89%91%E6%8C%87Offer-3-%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/" rel="prev" title="剑指Offer(三) 栈和队列">
+                剑指Offer(三) 栈和队列 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -761,7 +808,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-用两个栈实现队列"><span class="nav-number">1.</span> <span class="nav-text">5. 用两个栈实现队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-包含min函数的栈"><span class="nav-number">2.</span> <span class="nav-text">20. 包含min函数的栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#21-栈的压入、弹出序列"><span class="nav-number">3.</span> <span class="nav-text">21. 栈的压入、弹出序列</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、生命周期"><span class="nav-number">1.</span> <span class="nav-text">一、生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-startService-stopService"><span class="nav-number">1.1.</span> <span class="nav-text">1.startService &#x2F; stopService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-bindService-unbindService"><span class="nav-number">1.2.</span> <span class="nav-text">2.bindService &#x2F; unbindService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-混合型（上面两种方式的交互）"><span class="nav-number">1.3.</span> <span class="nav-text">3.混合型（上面两种方式的交互）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、类型"><span class="nav-number">2.</span> <span class="nav-text">二、类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-按运行位置："><span class="nav-number">2.1.</span> <span class="nav-text">1. 按运行位置：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-按运行类型："><span class="nav-number">2.2.</span> <span class="nav-text">2. 按运行类型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-按启动方式："><span class="nav-number">2.3.</span> <span class="nav-text">3. 按启动方式：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、Service和Thread的区别"><span class="nav-number">3.</span> <span class="nav-text">三、Service和Thread的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、IntentService"><span class="nav-number">4.</span> <span class="nav-text">四、IntentService</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-特点："><span class="nav-number">4.1.</span> <span class="nav-text">1. 特点：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-工作流程"><span class="nav-number">4.2.</span> <span class="nav-text">2. 工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-使用场景"><span class="nav-number">4.3.</span> <span class="nav-text">3. 使用场景</span></a></li></ol></li></ol></div>
             
 
           </div>
