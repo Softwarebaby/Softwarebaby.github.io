@@ -1,6 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>专业基础知识之计算机网络</title>
+    <url>/2020/02/28/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</url>
+    <content><![CDATA[<h3 id="1-网络分层体系结构"><a href="#1-网络分层体系结构" class="headerlink" title="1. 网络分层体系结构"></a>1. 网络分层体系结构</h3><p><img src="/images/img_web.jpg" alt="img_web"></p>
+<ul>
+<li>应用层：提供用户与网络交互的接口，定义了应用程序间通信和交互的规则。—— HTTP、FTP、POP、SMTP</li>
+<li>运输层：负责不同主机进程之间的数据传输。—— TCP、UDP</li>
+<li>网络层：负责不同主机之间的数据传输。—— IP</li>
+<li>数据链路层：负责相邻结点之间的数据传输。—— PPP</li>
+<li>物理层：在物理介质上的传输。</li>
+</ul>
+<p><strong>PDU（协议数据单元）：</strong></p>
+<ul>
+<li>应用层：各应用报文</li>
+<li>运输层：TCP/UDP数据段</li>
+<li>网络层：IP数据包</li>
+<li>数据链路层：帧</li>
+<li>物理层：比特</li>
+</ul>
+<h3 id="2-GET-和-POST-两种请求方式的区别"><a href="#2-GET-和-POST-两种请求方式的区别" class="headerlink" title="2. GET 和 POST 两种请求方式的区别"></a>2. GET 和 POST 两种请求方式的区别</h3><p>（1）URL可见性</p>
+<ul>
+<li>get：URL参数可见</li>
+<li>post：URL参数不可见</li>
+</ul>
+<p>（2）数据传输</p>
+<ul>
+<li>get：通过拼接URL进行传递参数</li>
+<li>post：通过Body体传递参数</li>
+</ul>
+<p>（3）缓存性</p>
+<ul>
+<li>get：可缓存</li>
+<li>post：不可缓存</li>
+</ul>
+<p>（4）后退页面的反应</p>
+<ul>
+<li>get：页面后退后，不产生影响</li>
+<li>post：页面后退后，会重新提交请求</li>
+</ul>
+<p>（5）传输数据的大小</p>
+<ul>
+<li>get：有限制（一般不超过2k-4k）</li>
+<li>post：没有限制</li>
+</ul>
+<p>（6）安全性</p>
+<ul>
+<li>get：不安全（URL参数可见）</li>
+<li>post：安全</li>
+</ul>
+<h3 id="3-TCP-和-UDP-的区别"><a href="#3-TCP-和-UDP-的区别" class="headerlink" title="3. TCP 和 UDP 的区别"></a>3. TCP 和 UDP 的区别</h3><p>主要区别：<br><strong>TCP：</strong><br>1）<strong>面向连接的</strong>，连接的建立需要三次握手，；连接的释放需要四次挥手<br>2）<strong>面向字节流</strong>，会把上层传输下来的数据当作是无结构的字节流<br>3）<strong>一对一通信</strong><br>4）<strong>能够保证可靠传输</strong>，具有超时重传机制，并有数据校验<br><strong>UDP：</strong><br>1）<strong>无连接的</strong>，一方向另一方发送数据不需要建立连接<br>2）<strong>面向报文</strong>，从上层接受的数据如果报文不大于传输限制，则直接加上首部；如果过大，则进行IP分片后，再加上首部进行传输<br>3）<strong>可以一对一通信，也可以一对多通信</strong><br>4）<strong>不保证可靠传输</strong>，仅仅是尽最大努力交付</p>
+<p>详细区别：<br><img src="/images/img_tcp_udp.jpg" alt="img_tcp_udp"></p>
+<p><strong>什么时候应该使用TCP？</strong><br>当对网络通讯质量有要求的时候， 比如： 整个数据要准确无误的传递给对方， 这往往用于一些要求可靠的应用， 比如HTTP、 HTTPS、 FTP等传输文件的协议， POP、 SMTP等邮件传输的协议。</p>
+<p><strong>什么时候应该使用UDP？</strong><br>当对网络通讯质量要求不高的时候， 要求网络通讯速度能尽量的快， 这时就可以使用UDP。比如DNS域名系统。</p>
+<h3 id="4-TCP连接的建立与终止"><a href="#4-TCP连接的建立与终止" class="headerlink" title="4. TCP连接的建立与终止"></a>4. TCP连接的建立与终止</h3><h4 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h4><p><img src="/images/img_tcp_1.jpg" alt="img_tcp_1"><br><img src="/images/img_tcp_2.jpg" alt="img_tcp_2"></p>
+<p><strong>为什么要三次握手？</strong><br>　　为了防止已失效的连接请求报文段突然又传送到了服务端， 因而产生错误。</p>
+<h4 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h4><p><img src="/images/img_tcp_3.jpg" alt="img_tcp_3"><br><img src="/images/img_tcp_4.jpg" alt="img_tcp_4"></p>
+<p><strong>为什么要四次挥手？</strong><br>　　为了保证在最后断开的时候，客户端能够发送最后一个ACK报文段能够被服务器接收到，从而避免在下一个连接中出现上一个连接的滞留的报文。</p>
+]]></content>
+      <categories>
+        <category>专业基础知识</category>
+      </categories>
+      <tags>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java基础知识汇总</title>
+    <url>/2020/02/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%B1%87%E6%80%BB/</url>
+    <content><![CDATA[<h3 id="1-Java基本数据类型的字节数"><a href="#1-Java基本数据类型的字节数" class="headerlink" title="1. Java基本数据类型的字节数"></a>1. Java基本数据类型的字节数</h3><table>
+<thead>
+<tr>
+<th align="center">基本数据类型</th>
+<th align="center">字节数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">byte</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">boolean</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">char</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">short</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">int</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">long</td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">float</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">double</td>
+<td align="center">8</td>
+</tr>
+</tbody></table>
+<p>注：long double：8</p>
+<a id="more"></a>
+
+<h3 id="2-基本数据类型和引用类型的区别"><a href="#2-基本数据类型和引用类型的区别" class="headerlink" title="2. 基本数据类型和引用类型的区别"></a>2. 基本数据类型和引用类型的区别</h3><p><strong>基本类型变量：</strong></p>
+<ul>
+<li>在内存中存储的是一个基本类型 值</li>
+<li>可以在栈中直接分配内存</li>
+<li>将一个变量的实际值赋给另一个变量：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">i = <span class="number">1</span>;</span><br><span class="line">j = <span class="number">2</span>;</span><br><span class="line">j = i;  <span class="comment">//就是将基本类型变量 j 的内容复制给基本类型变量 i</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><strong>引用类型变量：</strong></p>
+<ul>
+<li>在内存中存储的是一个引用，它指向对象的存储地址</li>
+<li>对象的引用在栈中，对象实际存放在堆中</li>
+<li>将一个变量的引用赋给另一个变量：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">c1 = <span class="keyword">new</span> Circle(<span class="number">9</span>);</span><br><span class="line">c2 = <span class="keyword">new</span> Circle(<span class="number">6</span>);</span><br><span class="line">c2 = c1;  <span class="comment">//就是将c2的引用赋给c1，赋值之后，变量c2和c1指向同一个对象</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">这个时候c1以前的引用对象不再有用，因此，现在它就称为垃圾。垃圾会占用内存空间。</span></span><br><span class="line"><span class="comment">Java运行系统会检测垃圾并自动回收它所占据的空间，这个过程称为垃圾回收。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>注意：</strong> 如果你不再需要某个对象，可以显式地给该对象的引用变量赋值为null。 如果该对象没有被任何引用变量所引用，Java虚拟机会自动回收它所占据的空间。</p>
+<h3 id="3-equals-和-的区别"><a href="#3-equals-和-的区别" class="headerlink" title="3. equals 和 == 的区别"></a>3. equals 和 == 的区别</h3><p><strong>==</strong><br>　　既可以比较基本数据类型类型的变量，又可以比较引用类型的变量。</p>
+<ul>
+<li>如果作用于基本的数据类型变量，则直接比较 <strong>值</strong> 是否相等；</li>
+<li>如果作用于引用类型的变量，则比较所指向的 <strong>对象的地址</strong> 是否相等。</li>
+</ul>
+<p><strong>equals</strong><br>　　只能比较引用类型的变量，而不能比较基本数据类型的变量。</p>
+<ul>
+<li>如果没有对equals方法进行重写，则比较的是引用类型的变量所指向的 <strong>对象的地址</strong> 是否相等；</li>
+<li>如果对equals方法进行重写（如String、Date等），则比较所指向 <strong>对象的内容</strong> 是否相等。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Java基础</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>详解事件分发机制</title>
     <url>/2020/02/27/%E8%AF%A6%E8%A7%A3%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<p>　　安卓上面的View是树形结构的，View可能会重叠在一起，当点击的地方有多个View可以响应的时候，这个点击事件应该给谁呢？为了解决这个问题，就有了<strong>事件分发机制</strong>。</p>
