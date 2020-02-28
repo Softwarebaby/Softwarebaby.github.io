@@ -88,8 +88,11 @@
 <meta property="og:site_name" content="Flow Garden">
 <meta property="og:description" content="内容提供者（ContentProvider） 是用于在不同的应用程序之间实现数据共享的一种组件。它提供了一套完整的机制，允许一个程序访问另一个程序中的数据，同时还能保证被访数据的安全性。">
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_content_provider.jpg">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_content_provider_new.jpg">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_uri.jpg">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_content_provider_all.jpg">
 <meta property="article:published_time" content="2020-02-27T08:10:00.000Z">
-<meta property="article:modified_time" content="2020-02-27T08:33:01.894Z">
+<meta property="article:modified_time" content="2020-02-28T01:55:24.572Z">
 <meta property="article:author" content="Bob Du">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -394,7 +397,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  168
+                  798
                 </span>
               
 
@@ -410,7 +413,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  2
                 </span>
               
             </div>
@@ -435,8 +438,26 @@
 <a id="more"></a>
 
 <h2 id="一、作用"><a href="#一、作用" class="headerlink" title="一、作用"></a>一、作用</h2><p>　　进程间进行数据的交互和共享，即跨进程通信（IPC）。<br><img src="/images/img_content_provider.jpg" alt="img_content_provider"></p>
-<h2 id="二、原理"><a href="#二、原理" class="headerlink" title="二、原理"></a>二、原理</h2><p>　　ContentProvider的底层是采用Android中的<strong>Binder机制</strong>。</p>
+<h2 id="二、原理"><a href="#二、原理" class="headerlink" title="二、原理"></a>二、原理</h2><p>　　ContentProvider的底层通信是采用Android中的<strong>Binder机制</strong>。<br><img src="/images/img_content_provider_new.jpg" alt="img_content_provider_new"></p>
+<h4 id="ContentProvider类"><a href="#ContentProvider类" class="headerlink" title="ContentProvider类"></a>ContentProvider类</h4><p>　　ContentProvider主要以表格的形式组织数据，同时也支持文件数据，只是表格形式用得比较多。每个表格中包含多张表， 每张表包含行 &amp; 列，分别对应记录 &amp; 字段。</p>
+<h4 id="ContentResolver类"><a href="#ContentResolver类" class="headerlink" title="ContentResolver类"></a>ContentResolver类</h4><p>　　统一管理不同ContentProvider间的操作。外部进程通过ContentResolver类，从而与ContentProvider类进行交互。<br>　　一般来说，一款应用要使用多个ContentProvider，若需要了解每个ContentProvider的不同实现从而再完成数据交互，操作成本高 &amp; 难度大。所以在ContentProvider类上加多了一个ContentResolver类对所有的ContentProvider进行统一管理。</p>
+<p>　　Android 提供了3个用于辅助 ContentProvide 的工具类：</p>
+<ul>
+<li><strong>ContentUris</strong>：操作 URI</li>
+<li><strong>UriMatcher</strong>：<br>1）在 ContentProvider 中注册 URI<br>2）根据 URI 匹配 ContentProvider 中对应的数据表</li>
+<li><strong>ContentObserver</strong>：观察 URI 引起 ContentProvider 中的数据变化并通知数据访问者</li>
+</ul>
 <h2 id="三、用法"><a href="#三、用法" class="headerlink" title="三、用法"></a>三、用法</h2><h3 id="1-主要用法："><a href="#1-主要用法：" class="headerlink" title="1. 主要用法："></a>1. 主要用法：</h3><p>（1）使用现有的内容提供者来读取和操作现有的程序中的数据。<br>（2）创建自己的内容提供者给我们的程序提供外部访问接口。</p>
+<h3 id="2-创建ContentProvider基本流程"><a href="#2-创建ContentProvider基本流程" class="headerlink" title="2. 创建ContentProvider基本流程"></a>2. 创建ContentProvider基本流程</h3><p>1）创建数据库类DBHelper继承自SQLiteOpenHelper<br>2）定义一个类DataProvider继承自ContentProvider<br>3）实现其onCreate、getType、insert、delete、update、query方法<br>4）在清单文件中注册ContentProvider<br>5）将访问途径Uri提供出去</p>
+<h3 id="3-使用ContentProvider基本流程"><a href="#3-使用ContentProvider基本流程" class="headerlink" title="3. 使用ContentProvider基本流程"></a>3. 使用ContentProvider基本流程</h3><p>1）通过getContentResolver获取ContentResolver对象resolver<br>2）通过Uri对ContentProvider中的数据进行增删改查操作</p>
+<h3 id="4-统一资源标识符（URI）"><a href="#4-统一资源标识符（URI）" class="headerlink" title="4. 统一资源标识符（URI）"></a>4. 统一资源标识符（URI）</h3><p>定义： Uniform Resource Identifier ， 即统一资源标识符<br>作用： 唯一标识 ContentProvider &amp; 其中的数据<br>　　外界进程通过 URI 找到对应的ContentProvider &amp; 其中的数据， 再进行数据操作。<br>具体使用：<br>　　URI分为 系统预置（如通讯录、 日程表等） &amp; 自定义<br><img src="/images/img_uri.jpg" alt="img_uri"></p>
+<h2 id="四、优点"><a href="#四、优点" class="headerlink" title="四、优点"></a>四、优点</h2><h3 id="1-安全"><a href="#1-安全" class="headerlink" title="1. 安全"></a>1. 安全</h3><p>　　ContentProvider为应用间的数据交互提供了一个安全的环境：允许把自己的应用数据<strong>根据需求</strong>开放给其他应用进行增、删、改、 查，而不用担心因为直接开放数据库权限而带来的安全问题。</p>
+<h3 id="2-访问简单-amp-高效"><a href="#2-访问简单-amp-高效" class="headerlink" title="2. 访问简单 &amp; 高效"></a>2. 访问简单 &amp; 高效</h3><p>　　对比于其他对外共享数据的方式，数据访问方式会因数据存储的方式而不同：</p>
+<ul>
+<li>采用 文件方式 对外共享数据， 需要进行文件操作读写数据；</li>
+<li>采用 Sharedpreferences 共享数据， 需要使用sharedpreferences API读写数据<br>这使得访问数据变得复杂 &amp; 难度大。<br>　　而采用ContentProvider方式，其解耦了底层数据的存储方式， 使得无论底层数据存储采用何种方式，外界对数据的访问方式都是统一的， 这使得访问简单 &amp;　高效。</li>
+</ul>
+<h2 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h2><p><img src="/images/img_content_provider_all.jpg" alt="img_content_provider_all"></p>
 
       
     </div>
@@ -759,7 +780,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、作用"><span class="nav-number">1.</span> <span class="nav-text">一、作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、原理"><span class="nav-number">2.</span> <span class="nav-text">二、原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、用法"><span class="nav-number">3.</span> <span class="nav-text">三、用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-主要用法："><span class="nav-number">3.1.</span> <span class="nav-text">1. 主要用法：</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、作用"><span class="nav-number">1.</span> <span class="nav-text">一、作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、原理"><span class="nav-number">2.</span> <span class="nav-text">二、原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ContentProvider类"><span class="nav-number">2.0.1.</span> <span class="nav-text">ContentProvider类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ContentResolver类"><span class="nav-number">2.0.2.</span> <span class="nav-text">ContentResolver类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、用法"><span class="nav-number">3.</span> <span class="nav-text">三、用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-主要用法："><span class="nav-number">3.1.</span> <span class="nav-text">1. 主要用法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-创建ContentProvider基本流程"><span class="nav-number">3.2.</span> <span class="nav-text">2. 创建ContentProvider基本流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-使用ContentProvider基本流程"><span class="nav-number">3.3.</span> <span class="nav-text">3. 使用ContentProvider基本流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-统一资源标识符（URI）"><span class="nav-number">3.4.</span> <span class="nav-text">4. 统一资源标识符（URI）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、优点"><span class="nav-number">4.</span> <span class="nav-text">四、优点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-安全"><span class="nav-number">4.1.</span> <span class="nav-text">1. 安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-访问简单-amp-高效"><span class="nav-number">4.2.</span> <span class="nav-text">2. 访问简单 &amp; 高效</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、总结"><span class="nav-number">5.</span> <span class="nav-text">五、总结</span></a></li></ol></div>
             
 
           </div>

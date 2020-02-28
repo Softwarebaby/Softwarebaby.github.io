@@ -90,8 +90,9 @@
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_activity_life_cycle.jpg">
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_activity_1.jpg">
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_activity_2.jpg">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_activity_start.jpg">
 <meta property="article:published_time" content="2020-02-26T07:51:00.000Z">
-<meta property="article:modified_time" content="2020-02-27T08:05:27.234Z">
+<meta property="article:modified_time" content="2020-02-28T00:34:30.813Z">
 <meta property="article:author" content="Bob Du">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -396,7 +397,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.1k
+                  1.4k
                 </span>
               
 
@@ -412,7 +413,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  5
                 </span>
               
             </div>
@@ -468,6 +469,23 @@
 </li>
 </ol>
 <p><strong>注意：</strong> 回退是按照该栈的压入顺序进行的，而不是按照启动顺序进行。</p>
+<h2 id="三、启动流程"><a href="#三、启动流程" class="headerlink" title="三、启动流程"></a>三、启动流程</h2><p><img src="/images/img_activity_start.jpg" alt="img_activity_start"></p>
+<ol>
+<li>Activity1调用startActivity，实际会调用Instrumentation类的execStartActivity方法</li>
+</ol>
+<p>Instrumentation是系统用来监控Activity运行的一个类，提供各种Activity生命周期的控制方法。</p>
+<ol start="2">
+<li><p>通过跨进程的binder调用，进入到ActivityManagerService中，其内部会处理Activity栈，通知Activity1 Pause，Activity1 执行Pause 后告知AMS</p>
+</li>
+<li><p>在ActivityManagerService中的startProcessLocked中调用了Process.start方法。并通过连接调用Zygote的native方法forkAndSpecialize，执行fork任务。之后再通过跨进程调用进入到Activity2所在的进程中。</p>
+</li>
+<li><p>主线程发起bind Application，AMS会做一些配置工作，然后让主线程bind ApplicationThread，ApplicationThread将启动Activity2的信息通过H对象发送给主线程。（发送的消息是EXECUTE_TRANSACTION，消息体是一个 ClientTransaction，即 LaunchActivityItem。）主线程拿到Activity2的信息后，调用Instrumentation类的newActivity方法，其内通过ClassLoader创建Activity2实例。</p>
+</li>
+</ol>
+<p>ApplicationThread是一个binder对象，其运行在binder线程池中，内部包含一个H类，该类继承于类Handler。</p>
+<ol start="5">
+<li>通知Activity2去performCreate(执行onCreate方法)。</li>
+</ol>
 
       
     </div>
@@ -790,7 +808,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、生命周期"><span class="nav-number">1.</span> <span class="nav-text">一、生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特定场景下的生命周期回调："><span class="nav-number">1.1.</span> <span class="nav-text">特定场景下的生命周期回调：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#onSaveInstanceState和onRestoreInstanceState"><span class="nav-number">1.1.1.</span> <span class="nav-text">onSaveInstanceState和onRestoreInstanceState</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、启动模式"><span class="nav-number">2.</span> <span class="nav-text">二、启动模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-标准模式（Standard）"><span class="nav-number">2.1.</span> <span class="nav-text">1. 标准模式（Standard）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-栈顶复用模式（SingleTop）"><span class="nav-number">2.2.</span> <span class="nav-text">2. 栈顶复用模式（SingleTop）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-栈内复用模式（SingleTask）"><span class="nav-number">2.3.</span> <span class="nav-text">3. 栈内复用模式（SingleTask）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-单例模式（SingleInstance）"><span class="nav-number">2.4.</span> <span class="nav-text">4. 单例模式（SingleInstance）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特殊情况："><span class="nav-number">2.4.1.</span> <span class="nav-text">* 特殊情况：</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、生命周期"><span class="nav-number">1.</span> <span class="nav-text">一、生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特定场景下的生命周期回调："><span class="nav-number">1.1.</span> <span class="nav-text">特定场景下的生命周期回调：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#onSaveInstanceState和onRestoreInstanceState"><span class="nav-number">1.1.1.</span> <span class="nav-text">onSaveInstanceState和onRestoreInstanceState</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、启动模式"><span class="nav-number">2.</span> <span class="nav-text">二、启动模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-标准模式（Standard）"><span class="nav-number">2.1.</span> <span class="nav-text">1. 标准模式（Standard）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-栈顶复用模式（SingleTop）"><span class="nav-number">2.2.</span> <span class="nav-text">2. 栈顶复用模式（SingleTop）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-栈内复用模式（SingleTask）"><span class="nav-number">2.3.</span> <span class="nav-text">3. 栈内复用模式（SingleTask）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-单例模式（SingleInstance）"><span class="nav-number">2.4.</span> <span class="nav-text">4. 单例模式（SingleInstance）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特殊情况："><span class="nav-number">2.4.1.</span> <span class="nav-text">* 特殊情况：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、启动流程"><span class="nav-number">3.</span> <span class="nav-text">三、启动流程</span></a></li></ol></div>
             
 
           </div>

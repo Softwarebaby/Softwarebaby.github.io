@@ -94,8 +94,26 @@
 <a id="more"></a>
 
 <h2 id="一、作用"><a href="#一、作用" class="headerlink" title="一、作用"></a>一、作用</h2><p>　　进程间进行数据的交互和共享，即跨进程通信（IPC）。<br><img src="/images/img_content_provider.jpg" alt="img_content_provider"></p>
-<h2 id="二、原理"><a href="#二、原理" class="headerlink" title="二、原理"></a>二、原理</h2><p>　　ContentProvider的底层是采用Android中的<strong>Binder机制</strong>。</p>
+<h2 id="二、原理"><a href="#二、原理" class="headerlink" title="二、原理"></a>二、原理</h2><p>　　ContentProvider的底层通信是采用Android中的<strong>Binder机制</strong>。<br><img src="/images/img_content_provider_new.jpg" alt="img_content_provider_new"></p>
+<h4 id="ContentProvider类"><a href="#ContentProvider类" class="headerlink" title="ContentProvider类"></a>ContentProvider类</h4><p>　　ContentProvider主要以表格的形式组织数据，同时也支持文件数据，只是表格形式用得比较多。每个表格中包含多张表， 每张表包含行 &amp; 列，分别对应记录 &amp; 字段。</p>
+<h4 id="ContentResolver类"><a href="#ContentResolver类" class="headerlink" title="ContentResolver类"></a>ContentResolver类</h4><p>　　统一管理不同ContentProvider间的操作。外部进程通过ContentResolver类，从而与ContentProvider类进行交互。<br>　　一般来说，一款应用要使用多个ContentProvider，若需要了解每个ContentProvider的不同实现从而再完成数据交互，操作成本高 &amp; 难度大。所以在ContentProvider类上加多了一个ContentResolver类对所有的ContentProvider进行统一管理。</p>
+<p>　　Android 提供了3个用于辅助 ContentProvide 的工具类：</p>
+<ul>
+<li><strong>ContentUris</strong>：操作 URI</li>
+<li><strong>UriMatcher</strong>：<br>1）在 ContentProvider 中注册 URI<br>2）根据 URI 匹配 ContentProvider 中对应的数据表</li>
+<li><strong>ContentObserver</strong>：观察 URI 引起 ContentProvider 中的数据变化并通知数据访问者</li>
+</ul>
 <h2 id="三、用法"><a href="#三、用法" class="headerlink" title="三、用法"></a>三、用法</h2><h3 id="1-主要用法："><a href="#1-主要用法：" class="headerlink" title="1. 主要用法："></a>1. 主要用法：</h3><p>（1）使用现有的内容提供者来读取和操作现有的程序中的数据。<br>（2）创建自己的内容提供者给我们的程序提供外部访问接口。</p>
+<h3 id="2-创建ContentProvider基本流程"><a href="#2-创建ContentProvider基本流程" class="headerlink" title="2. 创建ContentProvider基本流程"></a>2. 创建ContentProvider基本流程</h3><p>1）创建数据库类DBHelper继承自SQLiteOpenHelper<br>2）定义一个类DataProvider继承自ContentProvider<br>3）实现其onCreate、getType、insert、delete、update、query方法<br>4）在清单文件中注册ContentProvider<br>5）将访问途径Uri提供出去</p>
+<h3 id="3-使用ContentProvider基本流程"><a href="#3-使用ContentProvider基本流程" class="headerlink" title="3. 使用ContentProvider基本流程"></a>3. 使用ContentProvider基本流程</h3><p>1）通过getContentResolver获取ContentResolver对象resolver<br>2）通过Uri对ContentProvider中的数据进行增删改查操作</p>
+<h3 id="4-统一资源标识符（URI）"><a href="#4-统一资源标识符（URI）" class="headerlink" title="4. 统一资源标识符（URI）"></a>4. 统一资源标识符（URI）</h3><p>定义： Uniform Resource Identifier ， 即统一资源标识符<br>作用： 唯一标识 ContentProvider &amp; 其中的数据<br>　　外界进程通过 URI 找到对应的ContentProvider &amp; 其中的数据， 再进行数据操作。<br>具体使用：<br>　　URI分为 系统预置（如通讯录、 日程表等） &amp; 自定义<br><img src="/images/img_uri.jpg" alt="img_uri"></p>
+<h2 id="四、优点"><a href="#四、优点" class="headerlink" title="四、优点"></a>四、优点</h2><h3 id="1-安全"><a href="#1-安全" class="headerlink" title="1. 安全"></a>1. 安全</h3><p>　　ContentProvider为应用间的数据交互提供了一个安全的环境：允许把自己的应用数据<strong>根据需求</strong>开放给其他应用进行增、删、改、 查，而不用担心因为直接开放数据库权限而带来的安全问题。</p>
+<h3 id="2-访问简单-amp-高效"><a href="#2-访问简单-amp-高效" class="headerlink" title="2. 访问简单 &amp; 高效"></a>2. 访问简单 &amp; 高效</h3><p>　　对比于其他对外共享数据的方式，数据访问方式会因数据存储的方式而不同：</p>
+<ul>
+<li>采用 文件方式 对外共享数据， 需要进行文件操作读写数据；</li>
+<li>采用 Sharedpreferences 共享数据， 需要使用sharedpreferences API读写数据<br>这使得访问数据变得复杂 &amp; 难度大。<br>　　而采用ContentProvider方式，其解耦了底层数据的存储方式， 使得无论底层数据存储采用何种方式，外界对数据的访问方式都是统一的， 这使得访问简单 &amp;　高效。</li>
+</ul>
+<h2 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h2><p><img src="/images/img_content_provider_all.jpg" alt="img_content_provider_all"></p>
 ]]></content>
       <categories>
         <category>Android基础</category>
@@ -143,6 +161,16 @@
 <ol start="4">
 <li><strong>如果必须执行耗时任务可以考虑，在onReceive中开启服务来执行。</strong> 系统就会认为这个进程里还有其他活动组件在运行，就不会任意时刻回收此进程。</li>
 </ol>
+<h2 id="三、原理"><a href="#三、原理" class="headerlink" title="三、原理"></a>三、原理</h2><p><img src="/images/img_broadcast_receiver.jpg" alt="img_broadcast_receiver"></p>
+<ol>
+<li>广播接收者通过<strong>Binder机制</strong>向AMS(Activity Manager Service)进行注册；</li>
+<li>广播发送者通过<strong>Binder机制</strong>向AMS发送广播；</li>
+<li>AMS查找符合相应条件（IntentFilter/Permission等）的BroadcastReceiver，AMS将广播发送到上述符合条件的BroadcastReceiver（一般情况下是Activity）相应的消息循环队列中；</li>
+<li>BroadcastReceiver通过消息循环执行拿到此广播，回调BroadcastReceiver中的onReceive()方法。</li>
+</ol>
+<p><strong>注意：</strong><br>　　广播发送者和广播接收者的执行是<strong>异步</strong>的，发出去的广播不会关心有无接收者接收，也不确定接收者到底是何时才能接收到。</p>
+<h2 id="四、LocalBroadcastManager"><a href="#四、LocalBroadcastManager" class="headerlink" title="四、LocalBroadcastManager"></a>四、LocalBroadcastManager</h2><h3 id="1-作用"><a href="#1-作用" class="headerlink" title="1. 作用"></a>1. 作用</h3><p>（1）使用它发送的广播只能在自身App内传播，因此不必担心泄漏隐私数据；<br>（2）其它App无法对你的App发送广播，具有更高的安全性；<br>（3）比系统的全局广播更加高效。</p>
+<h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h3><p>　　内部是通过<strong>Handler</strong>实现的。它的sendBroadcast方法其实是通过Handler发送了一个Message。</p>
 ]]></content>
       <categories>
         <category>Android基础</category>
@@ -361,6 +389,23 @@
 </li>
 </ol>
 <p><strong>注意：</strong> 回退是按照该栈的压入顺序进行的，而不是按照启动顺序进行。</p>
+<h2 id="三、启动流程"><a href="#三、启动流程" class="headerlink" title="三、启动流程"></a>三、启动流程</h2><p><img src="/images/img_activity_start.jpg" alt="img_activity_start"></p>
+<ol>
+<li>Activity1调用startActivity，实际会调用Instrumentation类的execStartActivity方法</li>
+</ol>
+<p>Instrumentation是系统用来监控Activity运行的一个类，提供各种Activity生命周期的控制方法。</p>
+<ol start="2">
+<li><p>通过跨进程的binder调用，进入到ActivityManagerService中，其内部会处理Activity栈，通知Activity1 Pause，Activity1 执行Pause 后告知AMS</p>
+</li>
+<li><p>在ActivityManagerService中的startProcessLocked中调用了Process.start方法。并通过连接调用Zygote的native方法forkAndSpecialize，执行fork任务。之后再通过跨进程调用进入到Activity2所在的进程中。</p>
+</li>
+<li><p>主线程发起bind Application，AMS会做一些配置工作，然后让主线程bind ApplicationThread，ApplicationThread将启动Activity2的信息通过H对象发送给主线程。（发送的消息是EXECUTE_TRANSACTION，消息体是一个 ClientTransaction，即 LaunchActivityItem。）主线程拿到Activity2的信息后，调用Instrumentation类的newActivity方法，其内通过ClassLoader创建Activity2实例。</p>
+</li>
+</ol>
+<p>ApplicationThread是一个binder对象，其运行在binder线程池中，内部包含一个H类，该类继承于类Handler。</p>
+<ol start="5">
+<li>通知Activity2去performCreate(执行onCreate方法)。</li>
+</ol>
 ]]></content>
       <categories>
         <category>Android基础</category>

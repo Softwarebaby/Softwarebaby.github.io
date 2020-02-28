@@ -87,11 +87,13 @@
 <meta property="og:url" content="https://lvmdu.gitee.io/2020/02/27/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BBroadcastReceiver/index.html">
 <meta property="og:site_name" content="Flow Garden">
 <meta property="og:description" content="广播接收者（BroadcastReceiver） 是Android中用于接收广播的一种组件。广播是一种广泛运用的在应用程序之间传递信息的机制。广播类似于Java中的观察者模式，广播的内容是一个携带信息的Intent。">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_broadcast_receiver.jpg">
 <meta property="article:published_time" content="2020-02-27T03:16:00.000Z">
-<meta property="article:modified_time" content="2020-02-27T08:21:50.816Z">
+<meta property="article:modified_time" content="2020-02-28T01:02:42.005Z">
 <meta property="article:author" content="Bob Du">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lvmdu.gitee.io/images/img_broadcast_receiver.jpg">
 
 
 
@@ -392,7 +394,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  968
+                  1.2k
                 </span>
               
 
@@ -408,7 +410,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  4
                 </span>
               
             </div>
@@ -465,6 +467,16 @@
 <ol start="4">
 <li><strong>如果必须执行耗时任务可以考虑，在onReceive中开启服务来执行。</strong> 系统就会认为这个进程里还有其他活动组件在运行，就不会任意时刻回收此进程。</li>
 </ol>
+<h2 id="三、原理"><a href="#三、原理" class="headerlink" title="三、原理"></a>三、原理</h2><p><img src="/images/img_broadcast_receiver.jpg" alt="img_broadcast_receiver"></p>
+<ol>
+<li>广播接收者通过<strong>Binder机制</strong>向AMS(Activity Manager Service)进行注册；</li>
+<li>广播发送者通过<strong>Binder机制</strong>向AMS发送广播；</li>
+<li>AMS查找符合相应条件（IntentFilter/Permission等）的BroadcastReceiver，AMS将广播发送到上述符合条件的BroadcastReceiver（一般情况下是Activity）相应的消息循环队列中；</li>
+<li>BroadcastReceiver通过消息循环执行拿到此广播，回调BroadcastReceiver中的onReceive()方法。</li>
+</ol>
+<p><strong>注意：</strong><br>　　广播发送者和广播接收者的执行是<strong>异步</strong>的，发出去的广播不会关心有无接收者接收，也不确定接收者到底是何时才能接收到。</p>
+<h2 id="四、LocalBroadcastManager"><a href="#四、LocalBroadcastManager" class="headerlink" title="四、LocalBroadcastManager"></a>四、LocalBroadcastManager</h2><h3 id="1-作用"><a href="#1-作用" class="headerlink" title="1. 作用"></a>1. 作用</h3><p>（1）使用它发送的广播只能在自身App内传播，因此不必担心泄漏隐私数据；<br>（2）其它App无法对你的App发送广播，具有更高的安全性；<br>（3）比系统的全局广播更加高效。</p>
+<h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h3><p>　　内部是通过<strong>Handler</strong>实现的。它的sendBroadcast方法其实是通过Handler发送了一个Message。</p>
 
       
     </div>
@@ -787,7 +799,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、广播的分类"><span class="nav-number">1.</span> <span class="nav-text">一、广播的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-按形式分："><span class="nav-number">1.1.</span> <span class="nav-text">1. 按形式分：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-按级别分："><span class="nav-number">1.2.</span> <span class="nav-text">2. 按级别分：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、注册方式"><span class="nav-number">2.</span> <span class="nav-text">二、注册方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-动态注册"><span class="nav-number">2.1.</span> <span class="nav-text">1. 动态注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-静态注册"><span class="nav-number">2.2.</span> <span class="nav-text">2. 静态注册</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、广播的分类"><span class="nav-number">1.</span> <span class="nav-text">一、广播的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-按形式分："><span class="nav-number">1.1.</span> <span class="nav-text">1. 按形式分：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-按级别分："><span class="nav-number">1.2.</span> <span class="nav-text">2. 按级别分：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、注册方式"><span class="nav-number">2.</span> <span class="nav-text">二、注册方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-动态注册"><span class="nav-number">2.1.</span> <span class="nav-text">1. 动态注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-静态注册"><span class="nav-number">2.2.</span> <span class="nav-text">2. 静态注册</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、原理"><span class="nav-number">3.</span> <span class="nav-text">三、原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、LocalBroadcastManager"><span class="nav-number">4.</span> <span class="nav-text">四、LocalBroadcastManager</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-作用"><span class="nav-number">4.1.</span> <span class="nav-text">1. 作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理"><span class="nav-number">4.2.</span> <span class="nav-text">2. 原理</span></a></li></ol></li></ol></div>
             
 
           </div>
