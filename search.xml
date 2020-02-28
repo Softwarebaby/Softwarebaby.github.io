@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>详解事件分发机制</title>
+    <url>/2020/02/27/%E8%AF%A6%E8%A7%A3%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p>　　安卓上面的View是树形结构的，View可能会重叠在一起，当点击的地方有多个View可以响应的时候，这个点击事件应该给谁呢？为了解决这个问题，就有了<strong>事件分发机制</strong>。</p>
+<a id="more"></a>
+
+<h2 id="一、对象"><a href="#一、对象" class="headerlink" title="一、对象"></a>一、对象</h2><p>　　事件分发的<strong>三个主要对象</strong>：<strong>Activiy、ViewGroup、View</strong><br>　　事件分发的主要顺序： <strong>Activity(Window) -&gt; ViewGroup -&gt; View</strong><br>　　Android的UI界面是由Activity、 ViewGroup、 View及其派生类所构成的。<br><img src="/images/img_view_2.jpg" alt="img_view_2"></p>
+<p>　　Activity的构成如下：<br><img src="/images/img_view_1.png" alt="img_view_1"></p>
+<ul>
+<li>PhoneWindow：是抽象类Window的唯一实现类，抽象类Window是所有视图最顶层的容器，包括View视图的外观和行为都归Window管。</li>
+<li>DecorView：PhoneWindow的内部类，DecorView将屏幕氛围2个部分：TitleView 和 ContentView，我们平常加载的布局就是ContentView。通过DecorView传递信息给下面的View，下面的View也通过DecorView返回消息给PhoneWindow。</li>
+</ul>
+<p>事件分发的具体顺序： <strong>PhoneWindow -&gt; DecorView -&gt; ViewGroup -&gt; View</strong></p>
+<h2 id="二、重要方法"><a href="#二、重要方法" class="headerlink" title="二、重要方法"></a>二、重要方法</h2><ul>
+<li><strong>dispatchTouchEvent：</strong> 进行事件的分发</li>
+<li><strong>onInterceptTouchEvent：</strong> 进行事件的拦截， 在 dispatchTouchEvent 内部调用。</li>
+<li><strong>onTouchEvent：</strong> 处理事件，在 dispatchTouchEvent 内部调用。</li>
+</ul>
+<h2 id="三、分发流程"><a href="#三、分发流程" class="headerlink" title="三、分发流程"></a>三、分发流程</h2><p><img src="/images/img_view_3.jpg" alt="img_view_3"></p>
+<p><img src="/images/img_view_4.jpg" alt="img_view_4"></p>
+<p>（1）当点击事件产生后首先会由Activity来处理，在内部先传递到PhoneWindow，再传递给DecorView。之后传递到顶层的ViewGroup。<br>（2）ViewGroup的dispatchTouchEvent方法会进行判断：</p>
+<ul>
+<li>如果onInterceptTouchEvent方法返回true，则该ViewGroup就拦截这个事件，并交给它的onTouchEvent方法处理；</li>
+<li>如果onInterceptTouchEvent方法返回false，则该ViewGroup就不会拦截这个事件，因此，交给它的子元素(ViewGroup/View)的dispatchTouchEvent方法处理。如果子元素的onInterceptTouchEvent方法仍返回false，则继续向下传递……<br>（3）如此反复，直到传递到底层的View。<br>（4）底层View的onTouchEvent方法：</li>
+<li>如果返回true，则事件由底层View消耗并处理。</li>
+<li>如果返回false，则事件不做处理，传递到父元素(ViewGroup/View)的onTouchEvent处理。如果父元素的onTouchEvent方法仍返回false，则继续向上传递……<br>（5）如此反复，直到传递到Activity。如果Activity的onTouchEvent方法仍返回false，则该事件将会被抛弃。</li>
+</ul>
+<p>　　整个过程采用了<strong>责任链模式</strong>。</p>
+]]></content>
+      <categories>
+        <category>Android基础</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>详解消息机制</title>
     <url>/2020/02/27/%E8%AF%A6%E8%A7%A3%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<p>　　Android的<strong>消息机制</strong>也就是Handler机制。主要的作用是用来在不同线程之间的通信，通常使用在子线程执行完成一些耗时操作，需要回到主线程更新界面UI时，通过Handler将有关UI的操作切换到主线程。</p>
@@ -35,6 +71,7 @@
 </ul>
 <p><strong>注意：</strong><br>（1）只有onProgressUpdate在线程池中执行，可以执行耗时任务；其他方法都是在主线程中。<br>（2）AsyncTask的类必须在主线程中加载；对象必须在主线程中创建；execute方法必须在UI线程中调用。<br>（3）不要在程序中直接调用4个核心方法<br>（4）一个AsyncTask对象只能执行一次，只能调用一次execute方法。<br>（5）Android 1.6之前，AsyncTask是串行执行的。之后的版本加入了并行执行。可以通过executeOnExecutor并行执行任务，但不建议。</p>
 <h4 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h4><p>　　AsyncTask内部封装了一个静态线程池，通过内部的InternalHandler在UI线程和子线程之间传递消息。</p>
+<h4 id="3-使用不当的后果"><a href="#3-使用不当的后果" class="headerlink" title="3. 使用不当的后果"></a>3. 使用不当的后果</h4><p>1）生命周期<br>　　AsyncTask不与任何组件绑定生命周期， 所以在Activity/或者Fragment中创建执行AsyncTask时， 最好在Activity/Fragment的onDestory()调用cancel(boolean)。<br>2）内存泄漏<br>　　如果AsyncTask被声明为Activity的非静态的内部类， 那么AsyncTask会保留一个对创建了AsyncTask的Activity的引用。 如果Activity已经被销毁， AsyncTask的后台线程还在执行， 它将继续在内存里保留这个引用， 导致Activity无法被回收， 引起内存泄露。<br>3）结果丢失<br>　　屏幕旋转或Activity在后台被系统杀掉等情况会导致Activity的重新创建， 之前运行的AsyncTask（非静态的内部类）会持有一个之前Activity的引用， 这个引用已经无效， 这时再去更新界面将不再生效。</p>
 <h2 id="六、HandlerThread"><a href="#六、HandlerThread" class="headerlink" title="六、HandlerThread"></a>六、HandlerThread</h2><p>　　HandlerThread继承了Thread，同时它的内部创建了MessageQueue，可以进行Looper循环，是一个具有消息循环的线程。我们通过它可以直接使用Handler。</p>
 ]]></content>
       <categories>
