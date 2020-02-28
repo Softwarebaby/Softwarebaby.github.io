@@ -23,10 +23,14 @@
 <p>（1）当点击事件产生后首先会由Activity来处理，在内部先传递到PhoneWindow，再传递给DecorView。之后传递到顶层的ViewGroup。<br>（2）ViewGroup的dispatchTouchEvent方法会进行判断：</p>
 <ul>
 <li>如果onInterceptTouchEvent方法返回true，则该ViewGroup就拦截这个事件，并交给它的onTouchEvent方法处理；</li>
-<li>如果onInterceptTouchEvent方法返回false，则该ViewGroup就不会拦截这个事件，因此，交给它的子元素(ViewGroup/View)的dispatchTouchEvent方法处理。如果子元素的onInterceptTouchEvent方法仍返回false，则继续向下传递……<br>（3）如此反复，直到传递到底层的View。<br>（4）底层View的onTouchEvent方法：</li>
-<li>如果返回true，则事件由底层View消耗并处理。</li>
-<li>如果返回false，则事件不做处理，传递到父元素(ViewGroup/View)的onTouchEvent处理。如果父元素的onTouchEvent方法仍返回false，则继续向上传递……<br>（5）如此反复，直到传递到Activity。如果Activity的onTouchEvent方法仍返回false，则该事件将会被抛弃。</li>
+<li>如果onInterceptTouchEvent方法返回false，则该ViewGroup就不会拦截这个事件，因此，交给它的子元素(ViewGroup/View)的dispatchTouchEvent方法处理。如果子元素的onInterceptTouchEvent方法仍返回false，则继续向下传递……</li>
 </ul>
+<p>（3）如此反复，直到传递到底层的View。<br>（4）底层View的onTouchEvent方法：</p>
+<ul>
+<li>如果返回true，则事件由底层View消耗并处理。</li>
+<li>如果返回false，则事件不做处理，传递到父元素(ViewGroup/View)的onTouchEvent处理。如果父元素的onTouchEvent方法仍返回false，则继续向上传递……</li>
+</ul>
+<p>（5）如此反复，直到传递到Activity。如果Activity的onTouchEvent方法仍返回false，则该事件将会被抛弃。</p>
 <p>　　整个过程采用了<strong>责任链模式</strong>。</p>
 ]]></content>
       <categories>
