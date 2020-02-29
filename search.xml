@@ -59,6 +59,8 @@
     <title>Android内存泄漏</title>
     <url>/2020/02/29/Android%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/</url>
     <content><![CDATA[<h2 id="一、ANR"><a href="#一、ANR" class="headerlink" title="一、ANR"></a>一、ANR</h2><h3 id="1-什么是ANR？"><a href="#1-什么是ANR？" class="headerlink" title="1. 什么是ANR？"></a>1. 什么是ANR？</h3><p>　　<strong>ANR</strong> 即Application Not Responding，它是一个提示“应用程序无响应”的对话框。</p>
+<a id="more"></a>
+
 <h3 id="2-原因"><a href="#2-原因" class="headerlink" title="2. 原因"></a>2. 原因</h3><p>　　当应用程序的<strong>UI线程响应超时</strong>才会引起ANR，超时产生原因一般有两种：</p>
 <ul>
 <li>当前的事件没有机会得到处理（例如UI线程正在响应另外一个事件），当前事件由于某种原因被阻塞了。</li>
