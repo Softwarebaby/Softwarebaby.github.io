@@ -10,6 +10,8 @@
 <li>ART 虚拟机代替了 Dalvik 虚拟机</li>
 <li>多任务视图</li>
 </ol>
+<a id="more"></a>
+
 <h2 id="二、Android-6-0-新特性"><a href="#二、Android-6-0-新特性" class="headerlink" title="二、Android 6.0 新特性"></a>二、Android 6.0 新特性</h2><ol>
 <li>运行时权限</li>
 <li>集成了Android Pay</li>

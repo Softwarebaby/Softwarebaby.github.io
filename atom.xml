@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://lvmdu.gitee.io/"/>
-  <updated>2020-02-29T13:45:59.990Z</updated>
+  <updated>2020-02-29T13:54:05.846Z</updated>
   <id>https://lvmdu.gitee.io/</id>
   
   <author>
@@ -21,17 +21,19 @@
     <link href="https://lvmdu.gitee.io/2020/02/29/Android%E6%96%B0%E7%89%B9%E6%80%A7/"/>
     <id>https://lvmdu.gitee.io/2020/02/29/Android%E6%96%B0%E7%89%B9%E6%80%A7/</id>
     <published>2020-02-29T13:07:00.000Z</published>
-    <updated>2020-02-29T13:45:59.990Z</updated>
+    <updated>2020-02-29T13:54:05.846Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="一、Android-5-0-新特性"><a href="#一、Android-5-0-新特性" class="headerlink" title="一、Android 5.0 新特性"></a>一、Android 5.0 新特性</h2><ol><li>全新的 Material Design 设计风格</li><li>引入 RecyclerView 代替 ListView</li><li>增加不重要通知隐藏功能</li><li>ART 虚拟机代替了 Dalvik 虚拟机</li><li>多任务视图</li></ol><h2 id="二、Android-6-0-新特性"><a href="#二、Android-6-0-新特性" class="headerlink" title="二、Android 6.0 新特性"></a>二、Android 6.0 新特性</h2><ol><li>运行时权限</li><li>集成了Android Pay</li><li>指纹支持</li><li>Doze 电量管理</li></ol><h2 id="三、Android-7-0-新特性"><a href="#三、Android-7-0-新特性" class="headerlink" title="三、Android 7.0 新特性"></a>三、Android 7.0 新特性</h2><ol><li>多窗口模式</li><li>Data Saver（流量保护机制）</li><li>支持Java 8</li><li>通知栏快速回复</li><li>通知栏快捷开关</li></ol><h2 id="四、Android-8-0-新特性"><a href="#四、Android-8-0-新特性" class="headerlink" title="四、Android 8.0 新特性"></a>四、Android 8.0 新特性</h2><ol><li>Notification Channel（通知渠道）</li><li>PIP（画中画模式）</li><li>自适应图标</li><li>长按图标弹出子菜单</li><li>权限新增安装权限</li><li>电量优化（大部分静态注册广播失效）</li></ol><h2 id="五、Android-9-0-新特性"><a href="#五、Android-9-0-新特性" class="headerlink" title="五、Android 9.0 新特性"></a>五、Android 9.0 新特性</h2><ol><li>全面屏支持</li><li>多摄像头支持</li><li>手势操作</li><li>增加黑夜模式</li><li>设置应用程序时间限制</li><li>基于人工智能的电量自适应和亮度自适应</li></ol><h2 id="六、Android-10-0-新特性"><a href="#六、Android-10-0-新特性" class="headerlink" title="六、Android 10.0 新特性"></a>六、Android 10.0 新特性</h2><ol><li>可折叠的应用程序</li><li>5G 网络</li><li>基于人工智能的回复操作</li><li>可适用于系统和应用的暗黑主题</li><li>类似于PC的桌面模式</li><li>面部识别</li></ol>]]></content>
+    <content type="html"><![CDATA[<h2 id="一、Android-5-0-新特性"><a href="#一、Android-5-0-新特性" class="headerlink" title="一、Android 5.0 新特性"></a>一、Android 5.0 新特性</h2><ol><li>全新的 Material Design 设计风格</li><li>引入 RecyclerView 代替 ListView</li><li>增加不重要通知隐藏功能</li><li>ART 虚拟机代替了 Dalvik 虚拟机</li><li>多任务视图</li></ol><a id="more"></a><h2 id="二、Android-6-0-新特性"><a href="#二、Android-6-0-新特性" class="headerlink" title="二、Android 6.0 新特性"></a>二、Android 6.0 新特性</h2><ol><li>运行时权限</li><li>集成了Android Pay</li><li>指纹支持</li><li>Doze 电量管理</li></ol><h2 id="三、Android-7-0-新特性"><a href="#三、Android-7-0-新特性" class="headerlink" title="三、Android 7.0 新特性"></a>三、Android 7.0 新特性</h2><ol><li>多窗口模式</li><li>Data Saver（流量保护机制）</li><li>支持Java 8</li><li>通知栏快速回复</li><li>通知栏快捷开关</li></ol><h2 id="四、Android-8-0-新特性"><a href="#四、Android-8-0-新特性" class="headerlink" title="四、Android 8.0 新特性"></a>四、Android 8.0 新特性</h2><ol><li>Notification Channel（通知渠道）</li><li>PIP（画中画模式）</li><li>自适应图标</li><li>长按图标弹出子菜单</li><li>权限新增安装权限</li><li>电量优化（大部分静态注册广播失效）</li></ol><h2 id="五、Android-9-0-新特性"><a href="#五、Android-9-0-新特性" class="headerlink" title="五、Android 9.0 新特性"></a>五、Android 9.0 新特性</h2><ol><li>全面屏支持</li><li>多摄像头支持</li><li>手势操作</li><li>增加黑夜模式</li><li>设置应用程序时间限制</li><li>基于人工智能的电量自适应和亮度自适应</li></ol><h2 id="六、Android-10-0-新特性"><a href="#六、Android-10-0-新特性" class="headerlink" title="六、Android 10.0 新特性"></a>六、Android 10.0 新特性</h2><ol><li>可折叠的应用程序</li><li>5G 网络</li><li>基于人工智能的回复操作</li><li>可适用于系统和应用的暗黑主题</li><li>类似于PC的桌面模式</li><li>面部识别</li></ol>]]></content>
     
     <summary type="html">
     
-      
-      
-        &lt;h2 id=&quot;一、Android-5-0-新特性&quot;&gt;&lt;a href=&quot;#一、Android-5-0-新特性&quot; class=&quot;headerlink&quot; title=&quot;一、Android 5.0 新特性&quot;&gt;&lt;/a&gt;一、Android 5.0 新特性&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;全新的 
-      
+      &lt;h2 id=&quot;一、Android-5-0-新特性&quot;&gt;&lt;a href=&quot;#一、Android-5-0-新特性&quot; class=&quot;headerlink&quot; title=&quot;一、Android 5.0 新特性&quot;&gt;&lt;/a&gt;一、Android 5.0 新特性&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;全新的 Material Design 设计风格&lt;/li&gt;
+&lt;li&gt;引入 RecyclerView 代替 ListView&lt;/li&gt;
+&lt;li&gt;增加不重要通知隐藏功能&lt;/li&gt;
+&lt;li&gt;ART 虚拟机代替了 Dalvik 虚拟机&lt;/li&gt;
+&lt;li&gt;多任务视图&lt;/li&gt;
+&lt;/ol&gt;
     
     </summary>
     
