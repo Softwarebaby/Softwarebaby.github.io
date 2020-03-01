@@ -7,7 +7,7 @@
 <a id="more"></a>
 
 <h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h3><p><img src="/images/img_volley.png" alt="img_volley"></p>
-<h2 id="二-OkHttp"><a href="#二-OkHttp" class="headerlink" title="二. OkHttp"></a>二. OkHttp</h2><h3 id="1-使用方法-1"><a href="#1-使用方法-1" class="headerlink" title="1. 使用方法"></a>1. 使用方法</h3><p>（1）通过Request.Builder创建一个Request对象<br>（2）创建一个OkHttpClient对象<br>（3）将Request传入OkHttpClient对象中(mOkHttpClient.newCall(request))，来创建一个Call对象<br>(4)调用Call对象的execute(同步)/enqueue(异步)方法来执行</p>
+<h2 id="二-OkHttp"><a href="#二-OkHttp" class="headerlink" title="二. OkHttp"></a>二. OkHttp</h2><h3 id="1-使用方法-1"><a href="#1-使用方法-1" class="headerlink" title="1. 使用方法"></a>1. 使用方法</h3><p>（1）通过Request.Builder创建一个Request对象<br>（2）创建一个OkHttpClient对象<br>（3）将Request传入OkHttpClient对象中(mOkHttpClient.newCall(request))，来创建一个Call对象<br>（4）调用Call对象的execute(同步)/enqueue(异步)方法来执行</p>
 <h3 id="2-原理-1"><a href="#2-原理-1" class="headerlink" title="2. 原理"></a>2. 原理</h3><p><img src="/images/img_okhttp.png" alt="img_okhttp"></p>
 <h2 id="三、Retrofit"><a href="#三、Retrofit" class="headerlink" title="三、Retrofit"></a>三、Retrofit</h2><h3 id="1-使用方法-2"><a href="#1-使用方法-2" class="headerlink" title="1. 使用方法"></a>1. 使用方法</h3><p><strong>一般用法：</strong><br>（1）定义请求接口类，使用@GET/@POST注解注解编写网络请求接口<br>（2）使用Buider模式创建Retrofit实例<br>（3）通过Retrofit对象的create方法传入之前的请求接口类，来创建请求实体对象<br>（4）调用请求对象的请求方法生成能够发起网络请求的Call对象<br>（5）调用Call对象的enqueue方法发起异步网络请求</p>
 <p><strong>高级用法：</strong><br>适配OkHttpCall的Factory：<br>（1）定义请求接口类，使用@GET/@POST注解编写网络请求接口<br>（2）使用单例模式创建一个RetrofitFactory<br>（3）在RetrofitFactory内部创建一个OkHttpClient，并通过Builder模式利用OkHttpClient来创建一个Retrofit实例<br>（4）通过Retrofit对象的create方法传入之前的请求接口类，来创建请求实体对象<br>（5）客户端通过RetroFactory来调用请求对象的请求方法生成能够发起网络请求的Call对象<br>（6）调用Call对象的enqueue方法发起异步网络请求</p>
