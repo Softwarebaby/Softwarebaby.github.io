@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="Flow Garden">
 <meta property="og:description" content="一、ButterKnife　　从严格意义讲不算是依赖注入框架， 它只是专注于Android系统的View注入框架， 并不支持其他方面的注入。 它可以减少大量的findViewById（@BindView）以及setOnClickListener（@OnClick）代码， 简化代码并提升开发效率。">
 <meta property="article:published_time" content="2020-03-01T03:49:00.000Z">
-<meta property="article:modified_time" content="2020-03-01T08:10:56.010Z">
+<meta property="article:modified_time" content="2020-03-01T08:16:36.966Z">
 <meta property="article:author" content="Bob Du">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  679
+                  671
                 </span>
               
 
@@ -432,8 +432,7 @@
         <h2 id="一、ButterKnife"><a href="#一、ButterKnife" class="headerlink" title="一、ButterKnife"></a>一、ButterKnife</h2><p>　　从严格意义讲不算是依赖注入框架， 它只是专注于Android系统的View注入框架， 并不支持其他方面的注入。 它可以减少大量的findViewById（@BindView）以及setOnClickListener（@OnClick）代码， 简化代码并提升开发效率。</p>
 <a id="more"></a>
 
-<p>　　ButterKnife 采用的是<strong>编译时注解</strong>。</p>
-<ul>
+<h3 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h3><ul>
 <li>ButterKnife.bind(this)：根据Activity对应的Class得到一个继承了Unbinder的Constructor，最后通过<strong>反射</strong>constructor.newInstance(target, source)得到Unbinder子类的一个新的实例（MainActivity_ViewBinding的实例）。其中获取Constructor是通过LinkedHashMap缓存了对应的Class和Constructor以提高效率。</li>
 <li>注解处理器：通过注解处理器，将source值、ID等参数传入MainActivity_ViewBinding的findRequiredViewAsType方法，在该方法内部调用了findRequiredView方法，findRequiredView方法又调用了DecorView的findViewById方法并将R.id.tv_text对应的View返回。接着findRequiredViewAsType方法调用castView方法，将View强制转换成传入的Class值的类型（即对应的View.class），最终强制转换为对应的组件并返回，MainActivity_ViewBinding辅助类会把这个返回的组件会赋值给target，也就是MainActivity，这样在MainActivity就可以使用这个组件了。</li>
 </ul>
@@ -654,7 +653,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -665,7 +664,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -758,7 +757,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、ButterKnife"><span class="nav-number">1.</span> <span class="nav-text">一、ButterKnife</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Dagger"><span class="nav-number">2.</span> <span class="nav-text">二、Dagger</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-使用方法"><span class="nav-number">2.1.</span> <span class="nav-text">1. 使用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理"><span class="nav-number">2.2.</span> <span class="nav-text">2. 原理</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、ButterKnife"><span class="nav-number">1.</span> <span class="nav-text">一、ButterKnife</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理："><span class="nav-number">1.1.</span> <span class="nav-text">原理：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Dagger"><span class="nav-number">2.</span> <span class="nav-text">二、Dagger</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-使用方法"><span class="nav-number">2.1.</span> <span class="nav-text">1. 使用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理"><span class="nav-number">2.2.</span> <span class="nav-text">2. 原理</span></a></li></ol></li></ol></div>
             
 
           </div>
