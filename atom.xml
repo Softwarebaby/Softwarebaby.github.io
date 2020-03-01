@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://lvmdu.gitee.io/"/>
-  <updated>2020-03-01T03:59:56.147Z</updated>
+  <updated>2020-03-01T08:10:56.010Z</updated>
   <id>https://lvmdu.gitee.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>开源框架（二） 依赖注入框架</title>
+    <link href="https://lvmdu.gitee.io/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-2-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%A1%86%E6%9E%B6/"/>
+    <id>https://lvmdu.gitee.io/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-2-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%A1%86%E6%9E%B6/</id>
+    <published>2020-03-01T03:49:00.000Z</published>
+    <updated>2020-03-01T08:10:56.010Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="一、ButterKnife"><a href="#一、ButterKnife" class="headerlink" title="一、ButterKnife"></a>一、ButterKnife</h2><p>　　从严格意义讲不算是依赖注入框架， 它只是专注于Android系统的View注入框架， 并不支持其他方面的注入。 它可以减少大量的findViewById（@BindView）以及setOnClickListener（@OnClick）代码， 简化代码并提升开发效率。</p><a id="more"></a><p>　　ButterKnife 采用的是<strong>编译时注解</strong>。</p><ul><li>ButterKnife.bind(this)：根据Activity对应的Class得到一个继承了Unbinder的Constructor，最后通过<strong>反射</strong>constructor.newInstance(target, source)得到Unbinder子类的一个新的实例（MainActivity_ViewBinding的实例）。其中获取Constructor是通过LinkedHashMap缓存了对应的Class和Constructor以提高效率。</li><li>注解处理器：通过注解处理器，将source值、ID等参数传入MainActivity_ViewBinding的findRequiredViewAsType方法，在该方法内部调用了findRequiredView方法，findRequiredView方法又调用了DecorView的findViewById方法并将R.id.tv_text对应的View返回。接着findRequiredViewAsType方法调用castView方法，将View强制转换成传入的Class值的类型（即对应的View.class），最终强制转换为对应的组件并返回，MainActivity_ViewBinding辅助类会把这个返回的组件会赋值给target，也就是MainActivity，这样在MainActivity就可以使用这个组件了。</li></ul><h2 id="二、Dagger"><a href="#二、Dagger" class="headerlink" title="二、Dagger"></a>二、Dagger</h2><p>　　Dagger是一个基于Java依赖注入标准的依赖注入框架， 在编译期间自动生成代码， 负责依赖对象的创建。</p><h3 id="1-使用方法"><a href="#1-使用方法" class="headerlink" title="1. 使用方法"></a>1. 使用方法</h3><p>（1）创建Module容器（类），它的作用是提供实例化的对象，需要添加 @Module 注解。同时，创建提供实体类实例的方法并添加 @Provides 注解。<br>（2）创建Component连接件（接口），它是沟通调用者和容器的桥梁，需要添加 @Component 注解，并且用注解的modules属性指明作为容器的类。并在Component中定义抽象的inject注入方法。<br>（3）Rebuild项目，这时Dagger框架会自动创建一个以Dagger-开头的辅助类（DaggerMainComponent）。<br>（4）调用者首先使用DaggerMainComponent采用Builder模式来创建一个DaggerMainComponent的实例，需要传入一个Module容器的实例。接着调用inject方法将调用者注入。<br>（5）在调用者类中，声明一个实体类的变量，使用 @Inject 注解标记，即可获得该实体类的实例。</p><h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h3><p>　　DaggerMainComponent重写了MainComponent接口的inject()方法，里边调用的injectMainActivity()方法是完成依赖注入的关键。它会调用生成的MainActivity_MembersInjector类，这个类中会将实例提供给被注入的Activity，而实例的生成则是通过另一个生成的MainModule_ProvideXxxxFactory来实现的，这个Factory中传入了我们创建的Module容器，并在里面调用我们所创建的provide实体的方法。最终就完成了实例的创建和注入，归根到底所创建的实例还是我们在Module里面定义和创建的。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;一、ButterKnife&quot;&gt;&lt;a href=&quot;#一、ButterKnife&quot; class=&quot;headerlink&quot; title=&quot;一、ButterKnife&quot;&gt;&lt;/a&gt;一、ButterKnife&lt;/h2&gt;&lt;p&gt;　　从严格意义讲不算是依赖注入框架， 它只是专注于Android系统的View注入框架， 并不支持其他方面的注入。 它可以减少大量的findViewById（@BindView）以及setOnClickListener（@OnClick）代码， 简化代码并提升开发效率。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Android进阶" scheme="https://lvmdu.gitee.io/categories/Android%E8%BF%9B%E9%98%B6/"/>
+    
+    
+      <category term="Android" scheme="https://lvmdu.gitee.io/tags/Android/"/>
+    
+  </entry>
   
   <entry>
     <title>开源框架（一） 网络框架</title>
@@ -495,33 +518,6 @@
       
       
         &lt;p&gt;&lt;img src=&quot;/images/img_mind_map_android_1.png&quot; alt=&quot;img_mind_map_android_1&quot;&gt;&lt;/p&gt;
-
-      
-    
-    </summary>
-    
-    
-      <category term="知识图谱" scheme="https://lvmdu.gitee.io/categories/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/"/>
-    
-    
-      <category term="脑图" scheme="https://lvmdu.gitee.io/tags/%E8%84%91%E5%9B%BE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>知识图谱(一) Android工程师知识图谱</title>
-    <link href="https://lvmdu.gitee.io/2020/02/26/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1-1-Android%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/"/>
-    <id>https://lvmdu.gitee.io/2020/02/26/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1-1-Android%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</id>
-    <published>2020-02-25T23:20:00.000Z</published>
-    <updated>2020-02-26T02:18:54.730Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="/images/img_mind_map_all.png" alt="img_mind_map_all"></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;img src=&quot;/images/img_mind_map_all.png&quot; alt=&quot;img_mind_map_all&quot;&gt;&lt;/p&gt;
 
       
     
