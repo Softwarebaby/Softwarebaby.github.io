@@ -123,7 +123,22 @@
 <p>（4）AsyncTask<br>　　原因：同非静态内部类<br>　　解决方法：可以在onDestory中调用asyncTask.cancle(boolean)</p>
 <p>（5）static变量<br>　　原因：将变量声明为static时，将导致它的声明周期和整个App一样长，这部分的内存将不会被回收。<br>　　解决方法：考虑懒加载，尽量避免使用static变量；如果一定要使用，记得管理生命周期（onDestory中设为null）</p>
 <p>（6）资源未关闭<br>　　如：Broadcast Receiver、Stream、Observer、Socket、Bitmap等<br>　　当Activity销毁前，记得注销这些资源，否则这些资源有可能无法回收，进而导致内存泄漏</p>
-<h4 id="2-内存泄漏的定位和分析"><a href="#2-内存泄漏的定位和分析" class="headerlink" title="2. 内存泄漏的定位和分析"></a>2. 内存泄漏的定位和分析</h4>]]></content>
+<h4 id="2-内存泄漏的定位和分析"><a href="#2-内存泄漏的定位和分析" class="headerlink" title="2. 内存泄漏的定位和分析"></a>2. 内存泄漏的定位和分析</h4><h5 id="（1）adb命令验证是否存在内存泄漏"><a href="#（1）adb命令验证是否存在内存泄漏" class="headerlink" title="（1）adb命令验证是否存在内存泄漏"></a>（1）adb命令验证是否存在内存泄漏</h5><p>1）打开要测试的apk，然后返回退出到主界面<br>2）AS的Terminal中输入命令：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">adb <span class="keyword">shell</span><span class="bash"> dumpsys meminfo 包名 -d</span></span><br></pre></td></tr></table></figure>
+<p>　　然后便可以看到内存的一些情况<br>拉到下面可以看到：<br><img src="/images/img_memory_1.jpg" alt="img_memory_1"><br>　　退出APK之后，对象本应该都被回收，然而这里可以看到，还有View以及Activity占用着内存，由此可以知道内存泄漏了。</p>
+<h5 id="（2）Android-Profiler（性能分析器）定位内存泄漏"><a href="#（2）Android-Profiler（性能分析器）定位内存泄漏" class="headerlink" title="（2）Android Profiler（性能分析器）定位内存泄漏"></a>（2）Android Profiler（性能分析器）定位内存泄漏</h5><p>1）进入内存分析界面<br>2）打开apk，然后返回键退出，然后点击上图中垃圾桶形状的图标进行垃圾回收，多点几次，直到内存没有什么变化<br>3）获取内存快照<br>4）查看Head Dump<br><img src="/images/img_memory_2.jpg" alt="img_memory_2"><br>Shallow Heap（浅堆） 表示该对象自身占用的堆内存，不包括它引用的对象。<br>针对非数组类型的对象，它的大小就是对象与它所有的成员变量大小的总和。</p>
+<p>Shallow Heap（浅堆） 表示该对象自身占用的堆内存，不包括它引用的对象。<br>针对非数组类型的对象，它的大小就是对象与它所有的成员变量大小的总和。</p>
+<ul>
+<li>Shallow Heap（浅堆） 表示该对象自身占用的堆内存，不包括它引用的对象。</li>
+<li>Retained Heap（深堆） 表示当前对象大小 + 当前对象可直接或间接引用到的对象的大小总和。<br>换句话说，Retained Size就是当前对象被GC后，从Heap上总共能释放掉的内存。</li>
+</ul>
+<p>　　从而分析出了内存泄漏的具体类</p>
+<h5 id="（3）MAT-定位内存泄漏"><a href="#（3）MAT-定位内存泄漏" class="headerlink" title="（3）MAT 定位内存泄漏"></a>（3）MAT 定位内存泄漏</h5><p>1）进行格式转化</p>
+<figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">hprof-conv -z <span class="module-access"><span class="module"><span class="identifier">A</span>.</span></span>hprof <span class="module-access"><span class="module"><span class="identifier">B</span>.</span></span>hprof</span><br></pre></td></tr></table></figure>
+<p>2）Open Heap Dump 打开刚刚保存的内存快照，并点击点击 Histogram<br>3）可以看到引起内存泄漏的类，Objects那一列不为0，则是说明发生了内存泄漏<br>4）过滤掉虚引用，软引用，弱引用，之后可以看到引用路径即为发生内存泄漏的具体位置<br><img src="/images/img_memory_3.jpg" alt="img_memory_3"></p>
+<p><img src="/images/img_memory_4.jpg" alt="img_memory_4"></p>
+<h5 id="（4）LeakCanary-检测内存泄漏"><a href="#（4）LeakCanary-检测内存泄漏" class="headerlink" title="（4）LeakCanary 检测内存泄漏"></a>（4）LeakCanary 检测内存泄漏</h5><p>LeakCanary 是一个用于检测内存泄露的开源类库。<br>1）在代码中引入LeakCanary<br>2）启动app，当检测到内存泄漏的时候，会出现一个弹窗，然后手机桌面会出现一个Leaks的图标<br>3）点击即可看到内存泄漏的原因<br><img src="/images/img_memory_5.jpg" alt="img_memory_5"></p>
+]]></content>
       <categories>
         <category>Android进阶</category>
       </categories>
