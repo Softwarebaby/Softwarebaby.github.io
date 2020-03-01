@@ -81,20 +81,19 @@
 
 
 
-<meta name="description" content="一、Java 内存区域 方法区（公有）： 用户存储已被虚拟机加载的 类信息， 常量， 静态常量， 即时编译器编译后的代码 等数据。　　其中包含常量池： 用户存放编译器生成的各种字面量和符号引用。异常状态： OutOfMemoryError 堆（公有）： 是JVM所管理的内存中最大的一块。 唯一目的就是存放 实例对象 ， 几乎所有的对象实例都在这里分配。 Java堆是垃圾收集器管理的主要区域， 因此">
+<meta name="description" content="一、类加载机制1. 定义　　虚拟机把描述类的数据从Class文件加载到内存， 并对数据进行校验、 转换解析和初始化， 最终形成可以被虚拟机直接使用的Java类型。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="深入理解JVM之Java内存区域和内存模型">
-<meta property="og:url" content="https://lvmdu.gitee.io/2020/02/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8BJava%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:title" content="深入理解JVM之类加载机制和类加载器">
+<meta property="og:url" content="https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/index.html">
 <meta property="og:site_name" content="Flow Garden">
-<meta property="og:description" content="一、Java 内存区域 方法区（公有）： 用户存储已被虚拟机加载的 类信息， 常量， 静态常量， 即时编译器编译后的代码 等数据。　　其中包含常量池： 用户存放编译器生成的各种字面量和符号引用。异常状态： OutOfMemoryError 堆（公有）： 是JVM所管理的内存中最大的一块。 唯一目的就是存放 实例对象 ， 几乎所有的对象实例都在这里分配。 Java堆是垃圾收集器管理的主要区域， 因此">
-<meta property="og:image" content="https://lvmdu.gitee.io/images/img_java_memory_area.png">
-<meta property="og:image" content="https://lvmdu.gitee.io/images/img_java_memory_model.png">
-<meta property="article:published_time" content="2020-02-29T14:34:00.000Z">
-<meta property="article:modified_time" content="2020-03-01T09:26:24.770Z">
+<meta property="og:description" content="一、类加载机制1. 定义　　虚拟机把描述类的数据从Class文件加载到内存， 并对数据进行校验、 转换解析和初始化， 最终形成可以被虚拟机直接使用的Java类型。">
+<meta property="og:image" content="https://lvmdu.gitee.io/images/img_class_life_cycle.png">
+<meta property="article:published_time" content="2020-03-01T09:18:00.000Z">
+<meta property="article:modified_time" content="2020-03-01T10:06:00.298Z">
 <meta property="article:author" content="Bob Du">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://lvmdu.gitee.io/images/img_java_memory_area.png">
+<meta name="twitter:image" content="https://lvmdu.gitee.io/images/img_class_life_cycle.png">
 
 
 
@@ -124,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="https://lvmdu.gitee.io/2020/02/29/深入理解JVM之Java内存区域和内存模型/"/>
+  <link rel="canonical" href="https://lvmdu.gitee.io/2020/03/01/深入理解JVM之类加载机制和类加载器/"/>
 
 
 
 
 
-  <title>深入理解JVM之Java内存区域和内存模型 | Flow Garden</title>
+  <title>深入理解JVM之类加载机制和类加载器 | Flow Garden</title>
   
 
 
@@ -307,7 +306,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://lvmdu.gitee.io/2020/02/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8BJava%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Bob Du">
@@ -324,7 +323,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">深入理解JVM之Java内存区域和内存模型</h1>
+          <h1 class="post-title" itemprop="name headline">深入理解JVM之类加载机制和类加载器</h1>
         
 
         <div class="post-meta">
@@ -336,8 +335,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-29T22:34:00+08:00">
-                2020-02-29
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-01T17:18:00+08:00">
+                2020-03-01
               </time>
             
 
@@ -395,7 +394,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  601
+                  1.6k
                 </span>
               
 
@@ -411,7 +410,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  5
                 </span>
               
             </div>
@@ -432,20 +431,28 @@
       
 
       
-        <h2 id="一、Java-内存区域"><a href="#一、Java-内存区域" class="headerlink" title="一、Java 内存区域"></a>一、Java 内存区域</h2><ul>
-<li><strong>方法区（公有）</strong>： 用户存储已被虚拟机加载的 <em>类信息， 常量， 静态常量， 即时编译器编译后的代码</em> 等数据。<br>　　其中包含<strong>常量池</strong>： 用户存放编译器生成的各种字面量和符号引用。<br>异常状态： OutOfMemoryError</li>
-<li><strong>堆（公有）</strong>： 是JVM所管理的内存中<strong>最大</strong>的一块。 唯一目的就是存放 <em>实例对象</em> ， 几乎所有的对象实例都在这里分配。 Java堆是<strong>垃圾收集器管理的主要区域</strong>， 因此很多时候也被称为“GC堆”。<br>异常状态：OutOfMemoryError</li>
-<li><strong>虚拟机栈（线程私有）</strong>： 描述的是Java方法执行的内存模型： 每个方法在执行时都会创建一个栈帧， 用户存储 <em>局部变量表， 操作数栈， 动态链接， 方法出口</em> 等信息。每一个方法从调用直至完成的过程， 就对应着一个栈帧在虚拟机栈中入栈到出栈的过程。<br>异常状态：OutOfMemoryError、StackOverflowError</li>
-<li><strong>本地方法栈（线程私有）</strong>: 与虚拟机栈所发挥的作用相似。 它们之间的区别不过是虚拟机栈为虚拟机执行Java方法， 而本地方法栈为虚拟机使用到的Native方法。<br>异常状态：OutOfMemoryError、StackOverflowError</li>
-<li><strong>程序计数器（线程私有）</strong>： 一块较小的内存， 当前线程所执行的字节码的行号指示器。 字节码解释器工作时， 就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。<br>异常状态：无（唯一一个没有规定任何OutOfMemoryError情况的区域）<br><img src="/images/img_java_memory_area.png" alt="img_java_memory_area"></li>
+        <h2 id="一、类加载机制"><a href="#一、类加载机制" class="headerlink" title="一、类加载机制"></a>一、类加载机制</h2><h3 id="1-定义"><a href="#1-定义" class="headerlink" title="1. 定义"></a>1. 定义</h3><p>　　虚拟机把描述类的数据从Class文件加载到内存， 并对数据进行校验、 转换解析和初始化， 最终形成可以被虚拟机直接使用的Java类型。</p>
+<a id="more"></a>
+
+<h3 id="2-类的声明周期"><a href="#2-类的声明周期" class="headerlink" title="2. 类的声明周期"></a>2. 类的声明周期</h3><p><img src="/images/img_class_life_cycle.png" alt="img_class_life_cycle"></p>
+<p>　　其中，验证、准备、解析这三个步骤统称为连接。<br>　　类加载机制中的<strong>步骤</strong>：<strong>加载， 验证， 准备， 解析及初始化</strong> （解析阶段的顺序不一定，它在某些情况下可以在初始化完成后再开始）</p>
+<h3 id="3-触发类加载的条件"><a href="#3-触发类加载的条件" class="headerlink" title="3. 触发类加载的条件"></a>3. 触发类加载的条件</h3><p>① 遇到new，getstatic，putstatic或invokestatic这4条字节码指令时， 如果类没有进行过初始化， 则需要先触发初始化。<br>② 使用java.lang.reflect包的方法对类进行反射调用的时候。<br>③ 当初始化一个类的时候， 发现其父类还没有进行过初始化， 则需要先出发父类的初始化。<br>④ 当虚拟机启动时， 用户需要指定一个要执行的主类（包含main()方法的那个类） ， 虚拟机会先初始化这个主类。<br>⑤ 当使用JDK1.7的动态语言支持时， 如果一个java.lang.invoke.MethodHandle 实例最后的解析结果 REF_getStatic,REF_putStatic,REF_invokeStatic 的方法句柄， 并且这个方法句柄所对应的类没有进行初始化， 则需要先出发初始化。</p>
+<h3 id="4-类加载的具体过程"><a href="#4-类加载的具体过程" class="headerlink" title="4. 类加载的具体过程"></a>4. 类加载的具体过程</h3><h4 id="（1）加载"><a href="#（1）加载" class="headerlink" title="（1）加载"></a>（1）加载</h4><p>① 通过一个类的全限定名来获取定义此类的二进制字节流。<br>② 将这个字节流所代表的静态存储结构转换为方法区内的运行时数据结构。<br>③ 在内存中生成一个代表这个类的java.lang.Class对象， 作为方法区这个类的各种数据的访问入口。</p>
+<h4 id="（2）验证"><a href="#（2）验证" class="headerlink" title="（2）验证"></a>（2）验证</h4><p>　　是连接阶段的第一步， 目的是为了确保Class文件的字节流中包含的信息符合当前虚拟机的要求， 并且不会危害虚拟机自身的安全。</p>
+<p><strong>包含四个阶段的校验动作：</strong><br><strong>a.文件格式验证</strong><br>　　验证字节流是否符合Class文件格式的规范， 并且能被当前版本的虚拟机处理。<br><strong>b.元数据验证</strong><br>　　对类的元数据信息进行语义校验， 是否存在不符合Java语言规范的元数据信息。<br><strong>c.字节码验证</strong><br>　　最复杂的一个阶段， 主要目的是通过数据流和控制流分析， 确定程序语义是合法的， 符合逻辑的。 对类的方法体进行校验分析， 保证被校验类的方法在运行时不会做出危害虚拟机安全的事件。<br><strong>d.符号引用验证</strong><br>　　确保解析动作能正常进行。</p>
+<h4 id="（3）准备"><a href="#（3）准备" class="headerlink" title="（3）准备"></a>（3）准备</h4><p>　　准备阶段是正式为类变量分配内存并设置类变量初始值的阶段。 这些变量所使用的内存都将在方法区中分配。 只包括类变量。 初始值“通常情况”下是数据类型的零值。<br>　　“特殊情况”下， 如果类字段的字段属性表中存在ConstantValue属性， 那么在准备阶段变量的值就会被初始化为ConstantValue属性所指定的值。</p>
+<h4 id="（4）解析："><a href="#（4）解析：" class="headerlink" title="（4）解析："></a>（4）解析：</h4><p>　　虚拟机将常量池内的符号引用替换为直接引用的过程。<br>　　“动态解析”的含义就是必须等到程序实际运行到这条指令的时候， 解析动作才能进行。 相对的， 其余可触发解析的指令都是“静态”的， 可以在刚刚完成加载阶段， 还没有开始执行代码时就进行解析。</p>
+<h4 id="（5）初始化："><a href="#（5）初始化：" class="headerlink" title="（5）初始化："></a>（5）初始化：</h4><p>　　类加载过程中的最后一步。简单地说， 初始化就是对类变量进行赋值及执行静态代码块。<br>　　初始化阶段是执行类构造器 &lt;clinit&gt;() 方法的过程。<br>　　&lt;clinit&gt;() 方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块中的语句合并产生的。<br>　　&lt;clinit&gt;() 与类的构造函数不同， 它不需要显示地调用父类构造器， 虚拟机会保证在子类的 &lt;clinit&gt;() 方法执行之前， 父类的 &lt;clinit&gt;() 方法已经执行完毕。</p>
+<h2 id="二、类加载器"><a href="#二、类加载器" class="headerlink" title="二、类加载器"></a>二、类加载器</h2><p>　　类加载机制的加载部分的功能是将类的class文件读入内存， 并为之创建一个java.lang.Class对象。 这部分功能就是由类加载器来实现的。</p>
+<h3 id="1-类加载器分类"><a href="#1-类加载器分类" class="headerlink" title="1. 类加载器分类"></a>1. 类加载器分类</h3><p>　　不同的类加载器负责加载不同的类。 主要分为两类。<br>（1）启动类加载器（Bootstrap ClassLoader）<br>　　由C++语言实现（针对HotSpot） ，负责将存放在\lib目录或-Xbootclasspath参数指定的路径中的类库加载到内存中， 即负责加载Java的核心类。<br>（2）其他类加载器<br>　　由Java语言实现， 继承自抽象类ClassLoader。 如：</p>
+<ul>
+<li>扩展类加载器（Extension ClassLoader）： 负责载\lib\ext目录或java.ext.dirs系统变量指定的路径中的所有类库， 即负责加载Java扩展的核心类之外的类。</li>
+<li>应用程序类加载器（Application ClassLoader）： 负责加载用户类路径（classpath） 上的指定类库， 我们可以直接使用这个类加载器， 通过ClassLoader.getSystemClassLoader()方法直接获取。 一般情况， 如果我们没有自定义类加载器<strong>默认</strong>就是用这个加载器。</li>
 </ul>
-<h2 id="二、Java-内存模型"><a href="#二、Java-内存模型" class="headerlink" title="二、Java 内存模型"></a>二、Java 内存模型</h2><h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>　　屏蔽掉各种硬件和操作系统的内存访问差异， 以实现让java程序在各种平台下都能达到一致的内存访问效果。</p>
-<h3 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h3><ul>
-<li>所有的变量都存储在<strong>主内存</strong>中。</li>
-<li>每条线程中还有自己的<strong>工作内存</strong>， 工作内存中保存了被该线程所使用到的变量（这些变量是从主内存中拷贝而来） 。</li>
-<li>线程对变量的所有操作（读取、赋值）都必须在工作内存中进行。</li>
-<li>不同线程之间无法直接访问对方工作内存中的变量。</li>
-<li>线程间变量值的传递均需要通过主内存来完成。<br><img src="/images/img_java_memory_model.png" alt="img_java_memory_model"></li>
+<h3 id="2-双亲委派模型"><a href="#2-双亲委派模型" class="headerlink" title="2. 双亲委派模型"></a>2. 双亲委派模型</h3><h4 id="（1）工作流程"><a href="#（1）工作流程" class="headerlink" title="（1）工作流程"></a>（1）工作流程</h4><p>　　如果一个类加载器收到了类加载的请求， 它首先不会自己去尝试加载这个类， 而是把请求委托给父加载器去完成， 依次向上， 因此， 所有的类加载请求最终都应该被传递到顶层的启动类加载器中， 只有当父加载器在它的搜索范围中没有找到所需的类时， 即无法完成该加载， 子加载器才会尝试自己去加载该类。</p>
+<h4 id="（2）好处"><a href="#（2）好处" class="headerlink" title="（2）好处"></a>（2）好处</h4><ul>
+<li>无论哪个类加载器加载该类， 最终都是由启动类加载<br>器进行加载， 保证安全。</li>
+<li>即使用户自己编写一个系统类（如：java.lang.Object类）并放入程序中，虽能正常编译， 但不会被加载运行， 保证不会出现混乱。</li>
 </ul>
 
       
@@ -506,7 +513,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://lvmdu.gitee.io/2020/02/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8BJava%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" title="深入理解JVM之Java内存区域和内存模型">https://lvmdu.gitee.io/2020/02/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8BJava%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</a>
+    <a href="https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/" title="深入理解JVM之类加载机制和类加载器">https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -534,8 +541,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/02/29/Android%E6%96%B0%E7%89%B9%E6%80%A7/" rel="next" title="Android新特性">
-                <i class="fa fa-chevron-left"></i> Android新特性
+              <a href="/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-2-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%A1%86%E6%9E%B6/" rel="next" title="开源框架（二） 依赖注入框架">
+                <i class="fa fa-chevron-left"></i> 开源框架（二） 依赖注入框架
               </a>
             
           </div>
@@ -544,8 +551,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-1-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/" rel="prev" title="开源框架（一） 网络框架">
-                开源框架（一） 网络框架 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/" rel="prev" title="深入理解JVM之垃圾收集算法和垃圾回收机制">
+                深入理解JVM之垃圾收集算法和垃圾回收机制 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -665,7 +672,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">29</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -687,7 +694,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -769,7 +776,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Java-内存区域"><span class="nav-number">1.</span> <span class="nav-text">一、Java 内存区域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Java-内存模型"><span class="nav-number">2.</span> <span class="nav-text">二、Java 内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目的"><span class="nav-number">2.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内容"><span class="nav-number">2.2.</span> <span class="nav-text">内容</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、类加载机制"><span class="nav-number">1.</span> <span class="nav-text">一、类加载机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-定义"><span class="nav-number">1.1.</span> <span class="nav-text">1. 定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-类的声明周期"><span class="nav-number">1.2.</span> <span class="nav-text">2. 类的声明周期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-触发类加载的条件"><span class="nav-number">1.3.</span> <span class="nav-text">3. 触发类加载的条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-类加载的具体过程"><span class="nav-number">1.4.</span> <span class="nav-text">4. 类加载的具体过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）加载"><span class="nav-number">1.4.1.</span> <span class="nav-text">（1）加载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）验证"><span class="nav-number">1.4.2.</span> <span class="nav-text">（2）验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）准备"><span class="nav-number">1.4.3.</span> <span class="nav-text">（3）准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（4）解析："><span class="nav-number">1.4.4.</span> <span class="nav-text">（4）解析：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（5）初始化："><span class="nav-number">1.4.5.</span> <span class="nav-text">（5）初始化：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、类加载器"><span class="nav-number">2.</span> <span class="nav-text">二、类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-类加载器分类"><span class="nav-number">2.1.</span> <span class="nav-text">1. 类加载器分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-双亲委派模型"><span class="nav-number">2.2.</span> <span class="nav-text">2. 双亲委派模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）工作流程"><span class="nav-number">2.2.1.</span> <span class="nav-text">（1）工作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）好处"><span class="nav-number">2.2.2.</span> <span class="nav-text">（2）好处</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

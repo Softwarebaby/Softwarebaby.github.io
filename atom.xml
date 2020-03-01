@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://lvmdu.gitee.io/"/>
-  <updated>2020-03-01T08:16:36.966Z</updated>
+  <updated>2020-03-01T13:24:35.289Z</updated>
   <id>https://lvmdu.gitee.io/</id>
   
   <author>
@@ -15,6 +15,52 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>深入理解JVM之垃圾收集算法和垃圾回收机制</title>
+    <link href="https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/"/>
+    <id>https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</id>
+    <published>2020-03-01T10:07:00.000Z</published>
+    <updated>2020-03-01T13:24:35.289Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="一、何时GC？"><a href="#一、何时GC？" class="headerlink" title="一、何时GC？"></a>一、何时GC？</h2><h3 id="（一）引用计数算法"><a href="#（一）引用计数算法" class="headerlink" title="（一）引用计数算法"></a>（一）引用计数算法</h3><p>　　给对象添加一个引用计数器， 每当有一个地方引用它时， 计数器值就加1； 当引用失效时， 计数器值就减1； 任何时刻计数器为0的对象就是不可能被再使用的。<br>　　主流的JVM里面没有选用引用计数算法来管理内存， 其中最主要的原因是它<strong>很难解决对象间的互循环引用的问题</strong>。</p><a id="more"></a><h3 id="（二）可达性分析算法"><a href="#（二）可达性分析算法" class="headerlink" title="（二）可达性分析算法"></a>（二）可达性分析算法</h3><p>通过一些列的称为“<strong>GC Roots</strong>”的对象作为起始点， 从这些节点开始向下搜索， 搜索所走过的路径称为<strong>引用链</strong>， <em>当一个对象到GC Roots没有任何引用链相连时</em>（就是从GC Roots 到这个对象是不可达）， 则证明此对象是不可用的。 所以它们会被判定为可回收对象。</p><p>在Java语言中， <strong>可以作为GC Roots的对象</strong>包括下面几种：</p><ul><li>虚拟机栈（栈帧中的本地变量表）中引用的对象；</li><li>方法区中类静态属性引用的对象；</li><li>方法区中常量引用的对象；</li><li>本地方法栈中JNI（即一般说的Native方法）引用的对象；</li></ul><p>　　总结就是， 方法运行时， 方法中引用的对象； 类的静态变量引用的对象； 类中常量引用的对象； Native方法中引用的对象</p><h4 id="判断对象“死亡”："><a href="#判断对象“死亡”：" class="headerlink" title="判断对象“死亡”："></a>判断对象“死亡”：</h4><p>　　在可达性分析算法中， 要真正宣告一个对象死亡， 至少要经历<strong>两次标记</strong>过程：</p><ol><li>如果对象在进行可达性分析后发现没有与GC Roots相连接的引用链， 那它将会被第一次标记并且进行一次筛选， 筛选的条件是此对象是否有必要执行finalize()方法。 当对象没有 覆盖finalize()方法， 或者finalize()方法已经被虚拟机调用过， 虚拟机将这两种情况都视为“没有必要执行”。</li><li>如果这个对象被判定为有必要执行finalize()方法， 那么这个对象将会放置在一个叫做F-Queue队列之中， 并在稍后由一个由虚拟机自动建立的、 低优先级的Finalizer线程去执行它。 finalize()方法是对象逃脱死亡命运的最后一次机会， 稍候GC将对F-Queue中的对象进行第二次小规模的标记， 如果对象要在finalie()中成功拯救自己——只要重新与引用链上的任何一个对象建立关联即可， 譬如把自己（this关键字） 赋值给某个类变量或者对象的成员变量， 那在第二次标记时它将会被移除出“即将回收”的集合； 如果对象这时候还没有逃脱， 那基本上它就真的被回收了。</li></ol><h4 id="什么是强引用、-软引用、-弱引用、-虚引用？"><a href="#什么是强引用、-软引用、-弱引用、-虚引用？" class="headerlink" title="什么是强引用、 软引用、 弱引用、 虚引用？"></a>什么是强引用、 软引用、 弱引用、 虚引用？</h4><p>在JDK1.2之后， Java对引用的概念进行了扩充， 将引用分为强引用（Strong Reference）、 软引用（Soft Reference）、 弱引用（ Weak Reference）、 虚引用（Phantom Reference）四种， 这四种引用强度依次逐渐减弱。</p><ul><li>强引用： 就是指在程序代码之中普遍存在的， 类似“Object obj = new Object()”这类的引用， 只要强引用还存在， 垃圾收集器永远不会回收掉被引用的对象。</li><li>软引用： 用来描述一些还有用但并非必须的对象。 在系统将要发生内存溢出异常之前， 将会把这些对象列进回收范围之中进行第二次回收。使用SoftReference来实现软引用。</li><li>弱引用： 用户描述非必须对象的。 被弱引用关联的对象只能生存到下一次垃圾收集发生之前。 当垃圾收集器工作时， 无论当前内存是否足够， 都会回收掉只被弱引用关联的对象。使用WeakReference来实现弱引用。</li><li>虚引用： 也称幽灵引用或幻影引用。 一个对象是否有虚引用存在， 完全不会对其生存时间构成影响， 也无法通过虚引用来取得一个对象实例。 为一个对象设置虚引用的唯一目的就是能在这个对象被收集器回收时刻得到一个系统通知。使用PhantomReference来实现虚引用。</li></ul><h2 id="二、垃圾收集算法"><a href="#二、垃圾收集算法" class="headerlink" title="二、垃圾收集算法"></a>二、垃圾收集算法</h2><h3 id="1-标记-清除算法"><a href="#1-标记-清除算法" class="headerlink" title="1. 标记-清除算法"></a>1. 标记-清除算法</h3><p>　　最基础的收集算法是“标记-清除”（Mark-Sweep）算法， 算法分为“标记”和“清除”两个阶段：<br>① 首先标记出所有需要回收的对象。<br>② 在标记完成后统一回收所有被标记的对象。<br>缺点：<br>效率问题： 标记和清除两个过程的效率都不高<br>空间问题： 标记清除之后产生大量不连续的内存碎片， 空间碎片太多可能会导致以后程序运行过程中需要分配较大对象时， 无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。</p><h3 id="2-复制算法"><a href="#2-复制算法" class="headerlink" title="2. 复制算法"></a>2. 复制算法</h3><p>　　复制算法是为了解决效率问题。将可用内存按容量大小划分为大小相等的两块， 每次只使用其中的一块。 当一块内存使用完了， 就将还存活着的对象复制到另一块上面， 然后再把已使用过的内存空间一次清理掉。 这样使得每次都是对整个半区进行内存回收， 内存分配时也就不用考虑内存碎片等复杂情况。<br>缺点： 将内存缩小为了原来的一半。</p><p>　　<strong>新生代</strong>中对象98%对象是“朝生夕死”的， 所以不需要按照1： 1的比例来划分内存空间， 而是将内存分为较大的Eden空间和两块较小的Survivor空间， 每次使用Eden和其中一块Survivor。 当回收时， 将Eden和Survivor中还存活着的对象一次性地复制到另外一块Eden空间上， 最后清理掉Eden和刚才用过的Survivor空间。</p><p>　　HotSpot虚拟机中默认Eden和Survivor的大小比例是8 : 1。这样只有10%的空间会被浪费。当然，如果另外空间一块Survivor空间没有足够空间（需要的空间大于10%）存放上一次新生代收集下来的存活对象时，这些对象将直接通过<strong>分配担保机制</strong>进入老年代。</p><h3 id="3-标记-整理算法"><a href="#3-标记-整理算法" class="headerlink" title="3. 标记-整理算法"></a>3. 标记-整理算法</h3><p>　　复制算法在对象存活率较高时， 就要进行较多的复制操作， 效率就会变低。 根据<strong>老年代</strong>的特点， 提出了“标记-整理”算法。<br>标记过程仍然与”标记-清除“算法一样， 但后续步骤不是直接对可回收对象进行清理， 而是让所有存活的对象都向一端移动， 然后直接清理掉边界以外的内存。</p><h3 id="4-分代收集算法"><a href="#4-分代收集算法" class="headerlink" title="4. 分代收集算法"></a>4. 分代收集算法</h3><p>一般是把Java堆分为<strong>新生代</strong>和<strong>老年代</strong>， 这样就可以根据各个年代的特点采用最适当的收集算法。<br>（1）在新生代中， 每次垃圾收集时都发现有大批对象死去， 只有少量存活， 那就选用复制算法。<br>（2）在老年代中， 因为对象存活率高、 没有额外空间对它进行分配担保， 就必须采用“标记-清除”或“标记-整理”算法来进行回收。</p><h2 id="三、垃圾回收机制（GC）"><a href="#三、垃圾回收机制（GC）" class="headerlink" title="三、垃圾回收机制（GC）"></a>三、垃圾回收机制（GC）</h2><p>　　垃圾回收机制（Garbage Collection），简称GC。是Java语言的核心技术之一， 在Java中，当一个对象不能再被后续程序所引用到时，这个对象所占用的内存空间就没有存在的意义了，Java虚拟机会不定时的去检测内存中这样的对象，然后自动回收这块内存空间。这个机制就叫做垃圾回收机制。<br>　　下面介绍一些有关GC的概念问题。</p><h3 id="1-Minor-GC-和-Full-GC"><a href="#1-Minor-GC-和-Full-GC" class="headerlink" title="1. Minor GC 和 Full GC"></a>1. Minor GC 和 Full GC</h3><ul><li>Minor GC：指发生在新生代的垃圾收集动作， 该动作非常频繁。</li><li>Full GC/Major GC：指发生在老年代的垃圾收集动作， 出现了Major GC， 经常会伴随至少一次的Minor GC。 Major GC的速度一般会比Minor GC慢10倍以上。</li></ul><h3 id="2-JVM中的年代"><a href="#2-JVM中的年代" class="headerlink" title="2. JVM中的年代"></a>2. JVM中的年代</h3><p>　　JVM中分为年轻代（Young generation）和老年代(Tenured generation)。HotSpot JVM把年轻代分为了三部分： 1个Eden区和2个Survivor区（ 分别叫from和to） 。 默认比例为8： 1。<br>　　一般情况下， 新创建的对象都会被分配到Eden区(一些大对象特殊处理)， 这些对象经过第一次Minor GC后， 如果仍然存活， 将会被移到Survivor区。 对象在Survivor区中每熬过一次Minor GC， 年龄就会增加1岁， 当它的年龄增加到一定程度时， 就会被移动到年老代中。 因为年轻代中的对象基本都是朝生夕死的(80%以上)， 所以在年轻代的垃圾回收算法使用的是复制算法。复制算法不会产生内存碎片。在GC开始的时候， 对象只会存在于Eden区和名为“From”的Survivor区， Survivor区“To”是空的。 紧接着进行GC， Eden区中所有存活的对象都会被复制到“To”， 而在“From”区中， 仍存活的对象会根据他们的年龄值来决定去向。 年龄达到一定值(年龄阈值， 可以通过-XX:MaxTenuringThreshold来设置)的对象会被移动到年老代中， 没有达到阈值的对象会被复制到“To”区域。 经过这次GC后， Eden区和From区已经被清空。 这个时候， “From”和“To”会交换他们的角色， 也就是新的“To”就是上次GC前的“From”， 新的“From”就是上次GC前的“To”。 不管怎样， 都会保证名为To的Survivor区域是空的。 Minor GC会一直重复这样的过程， 直到“To”区被填满， “To”区被填满之后， 会将所有对象移动到年老代中。</p><h3 id="3-空间分配担保"><a href="#3-空间分配担保" class="headerlink" title="3. 空间分配担保"></a>3. 空间分配担保</h3><p>　　在发生Minor GC之前， 虚拟机会先检查老年代最大可用的连续空间是否大于新生代所有对象的总空间， 如果这个条件成立， 那么Minor GC可以 确保是安全的。 如果不成立， 则虚拟机会查看HandlePromotionFailure设置值是否允许担保失败。 如果允许， 那会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小， 如果大于， 则将尝试进行一次Minor GC， 尽管这个Minor GC是有风险的。 如果小于， 者HandlePromotionFailure设置不允许冒险， 那这时也要改为进行一次Full GC。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;一、何时GC？&quot;&gt;&lt;a href=&quot;#一、何时GC？&quot; class=&quot;headerlink&quot; title=&quot;一、何时GC？&quot;&gt;&lt;/a&gt;一、何时GC？&lt;/h2&gt;&lt;h3 id=&quot;（一）引用计数算法&quot;&gt;&lt;a href=&quot;#（一）引用计数算法&quot; class=&quot;headerlink&quot; title=&quot;（一）引用计数算法&quot;&gt;&lt;/a&gt;（一）引用计数算法&lt;/h3&gt;&lt;p&gt;　　给对象添加一个引用计数器， 每当有一个地方引用它时， 计数器值就加1； 当引用失效时， 计数器值就减1； 任何时刻计数器为0的对象就是不可能被再使用的。&lt;br&gt;　　主流的JVM里面没有选用引用计数算法来管理内存， 其中最主要的原因是它&lt;strong&gt;很难解决对象间的互循环引用的问题&lt;/strong&gt;。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Java虚拟机" scheme="https://lvmdu.gitee.io/categories/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/"/>
+    
+    
+      <category term="Java" scheme="https://lvmdu.gitee.io/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>深入理解JVM之类加载机制和类加载器</title>
+    <link href="https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/"/>
+    <id>https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/</id>
+    <published>2020-03-01T09:18:00.000Z</published>
+    <updated>2020-03-01T10:06:00.298Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="一、类加载机制"><a href="#一、类加载机制" class="headerlink" title="一、类加载机制"></a>一、类加载机制</h2><h3 id="1-定义"><a href="#1-定义" class="headerlink" title="1. 定义"></a>1. 定义</h3><p>　　虚拟机把描述类的数据从Class文件加载到内存， 并对数据进行校验、 转换解析和初始化， 最终形成可以被虚拟机直接使用的Java类型。</p><a id="more"></a><h3 id="2-类的声明周期"><a href="#2-类的声明周期" class="headerlink" title="2. 类的声明周期"></a>2. 类的声明周期</h3><p><img src="/images/img_class_life_cycle.png" alt="img_class_life_cycle"></p><p>　　其中，验证、准备、解析这三个步骤统称为连接。<br>　　类加载机制中的<strong>步骤</strong>：<strong>加载， 验证， 准备， 解析及初始化</strong> （解析阶段的顺序不一定，它在某些情况下可以在初始化完成后再开始）</p><h3 id="3-触发类加载的条件"><a href="#3-触发类加载的条件" class="headerlink" title="3. 触发类加载的条件"></a>3. 触发类加载的条件</h3><p>① 遇到new，getstatic，putstatic或invokestatic这4条字节码指令时， 如果类没有进行过初始化， 则需要先触发初始化。<br>② 使用java.lang.reflect包的方法对类进行反射调用的时候。<br>③ 当初始化一个类的时候， 发现其父类还没有进行过初始化， 则需要先出发父类的初始化。<br>④ 当虚拟机启动时， 用户需要指定一个要执行的主类（包含main()方法的那个类） ， 虚拟机会先初始化这个主类。<br>⑤ 当使用JDK1.7的动态语言支持时， 如果一个java.lang.invoke.MethodHandle 实例最后的解析结果 REF_getStatic,REF_putStatic,REF_invokeStatic 的方法句柄， 并且这个方法句柄所对应的类没有进行初始化， 则需要先出发初始化。</p><h3 id="4-类加载的具体过程"><a href="#4-类加载的具体过程" class="headerlink" title="4. 类加载的具体过程"></a>4. 类加载的具体过程</h3><h4 id="（1）加载"><a href="#（1）加载" class="headerlink" title="（1）加载"></a>（1）加载</h4><p>① 通过一个类的全限定名来获取定义此类的二进制字节流。<br>② 将这个字节流所代表的静态存储结构转换为方法区内的运行时数据结构。<br>③ 在内存中生成一个代表这个类的java.lang.Class对象， 作为方法区这个类的各种数据的访问入口。</p><h4 id="（2）验证"><a href="#（2）验证" class="headerlink" title="（2）验证"></a>（2）验证</h4><p>　　是连接阶段的第一步， 目的是为了确保Class文件的字节流中包含的信息符合当前虚拟机的要求， 并且不会危害虚拟机自身的安全。</p><p><strong>包含四个阶段的校验动作：</strong><br><strong>a.文件格式验证</strong><br>　　验证字节流是否符合Class文件格式的规范， 并且能被当前版本的虚拟机处理。<br><strong>b.元数据验证</strong><br>　　对类的元数据信息进行语义校验， 是否存在不符合Java语言规范的元数据信息。<br><strong>c.字节码验证</strong><br>　　最复杂的一个阶段， 主要目的是通过数据流和控制流分析， 确定程序语义是合法的， 符合逻辑的。 对类的方法体进行校验分析， 保证被校验类的方法在运行时不会做出危害虚拟机安全的事件。<br><strong>d.符号引用验证</strong><br>　　确保解析动作能正常进行。</p><h4 id="（3）准备"><a href="#（3）准备" class="headerlink" title="（3）准备"></a>（3）准备</h4><p>　　准备阶段是正式为类变量分配内存并设置类变量初始值的阶段。 这些变量所使用的内存都将在方法区中分配。 只包括类变量。 初始值“通常情况”下是数据类型的零值。<br>　　“特殊情况”下， 如果类字段的字段属性表中存在ConstantValue属性， 那么在准备阶段变量的值就会被初始化为ConstantValue属性所指定的值。</p><h4 id="（4）解析："><a href="#（4）解析：" class="headerlink" title="（4）解析："></a>（4）解析：</h4><p>　　虚拟机将常量池内的符号引用替换为直接引用的过程。<br>　　“动态解析”的含义就是必须等到程序实际运行到这条指令的时候， 解析动作才能进行。 相对的， 其余可触发解析的指令都是“静态”的， 可以在刚刚完成加载阶段， 还没有开始执行代码时就进行解析。</p><h4 id="（5）初始化："><a href="#（5）初始化：" class="headerlink" title="（5）初始化："></a>（5）初始化：</h4><p>　　类加载过程中的最后一步。简单地说， 初始化就是对类变量进行赋值及执行静态代码块。<br>　　初始化阶段是执行类构造器 &lt;clinit&gt;() 方法的过程。<br>　　&lt;clinit&gt;() 方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块中的语句合并产生的。<br>　　&lt;clinit&gt;() 与类的构造函数不同， 它不需要显示地调用父类构造器， 虚拟机会保证在子类的 &lt;clinit&gt;() 方法执行之前， 父类的 &lt;clinit&gt;() 方法已经执行完毕。</p><h2 id="二、类加载器"><a href="#二、类加载器" class="headerlink" title="二、类加载器"></a>二、类加载器</h2><p>　　类加载机制的加载部分的功能是将类的class文件读入内存， 并为之创建一个java.lang.Class对象。 这部分功能就是由类加载器来实现的。</p><h3 id="1-类加载器分类"><a href="#1-类加载器分类" class="headerlink" title="1. 类加载器分类"></a>1. 类加载器分类</h3><p>　　不同的类加载器负责加载不同的类。 主要分为两类。<br>（1）启动类加载器（Bootstrap ClassLoader）<br>　　由C++语言实现（针对HotSpot） ，负责将存放在\lib目录或-Xbootclasspath参数指定的路径中的类库加载到内存中， 即负责加载Java的核心类。<br>（2）其他类加载器<br>　　由Java语言实现， 继承自抽象类ClassLoader。 如：</p><ul><li>扩展类加载器（Extension ClassLoader）： 负责载\lib\ext目录或java.ext.dirs系统变量指定的路径中的所有类库， 即负责加载Java扩展的核心类之外的类。</li><li>应用程序类加载器（Application ClassLoader）： 负责加载用户类路径（classpath） 上的指定类库， 我们可以直接使用这个类加载器， 通过ClassLoader.getSystemClassLoader()方法直接获取。 一般情况， 如果我们没有自定义类加载器<strong>默认</strong>就是用这个加载器。</li></ul><h3 id="2-双亲委派模型"><a href="#2-双亲委派模型" class="headerlink" title="2. 双亲委派模型"></a>2. 双亲委派模型</h3><h4 id="（1）工作流程"><a href="#（1）工作流程" class="headerlink" title="（1）工作流程"></a>（1）工作流程</h4><p>　　如果一个类加载器收到了类加载的请求， 它首先不会自己去尝试加载这个类， 而是把请求委托给父加载器去完成， 依次向上， 因此， 所有的类加载请求最终都应该被传递到顶层的启动类加载器中， 只有当父加载器在它的搜索范围中没有找到所需的类时， 即无法完成该加载， 子加载器才会尝试自己去加载该类。</p><h4 id="（2）好处"><a href="#（2）好处" class="headerlink" title="（2）好处"></a>（2）好处</h4><ul><li>无论哪个类加载器加载该类， 最终都是由启动类加载<br>器进行加载， 保证安全。</li><li>即使用户自己编写一个系统类（如：java.lang.Object类）并放入程序中，虽能正常编译， 但不会被加载运行， 保证不会出现混乱。</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;一、类加载机制&quot;&gt;&lt;a href=&quot;#一、类加载机制&quot; class=&quot;headerlink&quot; title=&quot;一、类加载机制&quot;&gt;&lt;/a&gt;一、类加载机制&lt;/h2&gt;&lt;h3 id=&quot;1-定义&quot;&gt;&lt;a href=&quot;#1-定义&quot; class=&quot;headerlink&quot; title=&quot;1. 定义&quot;&gt;&lt;/a&gt;1. 定义&lt;/h3&gt;&lt;p&gt;　　虚拟机把描述类的数据从Class文件加载到内存， 并对数据进行校验、 转换解析和初始化， 最终形成可以被虚拟机直接使用的Java类型。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Java虚拟机" scheme="https://lvmdu.gitee.io/categories/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/"/>
+    
+    
+      <category term="Java" scheme="https://lvmdu.gitee.io/tags/Java/"/>
+    
+  </entry>
   
   <entry>
     <title>开源框架（二） 依赖注入框架</title>
@@ -64,20 +110,18 @@
   
   <entry>
     <title>深入理解JVM之Java内存区域和内存模型</title>
-    <link href="https://lvmdu.gitee.io/2020/02/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8BJava%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
-    <id>https://lvmdu.gitee.io/2020/02/29/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8BJava%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</id>
-    <published>2020-02-29T14:34:00.000Z</published>
-    <updated>2020-03-01T09:26:24.770Z</updated>
+    <link href="https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8BJava%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
+    <id>https://lvmdu.gitee.io/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8BJava%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</id>
+    <published>2020-03-01T01:56:00.000Z</published>
+    <updated>2020-03-01T10:06:33.080Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="一、Java-内存区域"><a href="#一、Java-内存区域" class="headerlink" title="一、Java 内存区域"></a>一、Java 内存区域</h2><ul><li><strong>方法区（公有）</strong>： 用户存储已被虚拟机加载的 <em>类信息， 常量， 静态常量， 即时编译器编译后的代码</em> 等数据。<br>　　其中包含<strong>常量池</strong>： 用户存放编译器生成的各种字面量和符号引用。<br>异常状态： OutOfMemoryError</li><li><strong>堆（公有）</strong>： 是JVM所管理的内存中<strong>最大</strong>的一块。 唯一目的就是存放 <em>实例对象</em> ， 几乎所有的对象实例都在这里分配。 Java堆是<strong>垃圾收集器管理的主要区域</strong>， 因此很多时候也被称为“GC堆”。<br>异常状态：OutOfMemoryError</li><li><strong>虚拟机栈（线程私有）</strong>： 描述的是Java方法执行的内存模型： 每个方法在执行时都会创建一个栈帧， 用户存储 <em>局部变量表， 操作数栈， 动态链接， 方法出口</em> 等信息。每一个方法从调用直至完成的过程， 就对应着一个栈帧在虚拟机栈中入栈到出栈的过程。<br>异常状态：OutOfMemoryError、StackOverflowError</li><li><strong>本地方法栈（线程私有）</strong>: 与虚拟机栈所发挥的作用相似。 它们之间的区别不过是虚拟机栈为虚拟机执行Java方法， 而本地方法栈为虚拟机使用到的Native方法。<br>异常状态：OutOfMemoryError、StackOverflowError</li><li><strong>程序计数器（线程私有）</strong>： 一块较小的内存， 当前线程所执行的字节码的行号指示器。 字节码解释器工作时， 就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。<br>异常状态：无（唯一一个没有规定任何OutOfMemoryError情况的区域）<br><img src="/images/img_java_memory_area.png" alt="img_java_memory_area"></li></ul><h2 id="二、Java-内存模型"><a href="#二、Java-内存模型" class="headerlink" title="二、Java 内存模型"></a>二、Java 内存模型</h2><h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>　　屏蔽掉各种硬件和操作系统的内存访问差异， 以实现让java程序在各种平台下都能达到一致的内存访问效果。</p><h3 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h3><ul><li>所有的变量都存储在<strong>主内存</strong>中。</li><li>每条线程中还有自己的<strong>工作内存</strong>， 工作内存中保存了被该线程所使用到的变量（这些变量是从主内存中拷贝而来） 。</li><li>线程对变量的所有操作（读取、赋值）都必须在工作内存中进行。</li><li>不同线程之间无法直接访问对方工作内存中的变量。</li><li>线程间变量值的传递均需要通过主内存来完成。<br><img src="/images/img_java_memory_model.png" alt="img_java_memory_model"></li></ul>]]></content>
+    <content type="html"><![CDATA[<h2 id="一、Java-内存区域"><a href="#一、Java-内存区域" class="headerlink" title="一、Java 内存区域"></a>一、Java 内存区域</h2><ul><li><strong>方法区（公有）</strong>： 用户存储已被虚拟机加载的 <em>类信息， 常量， 静态常量， 即时编译器编译后的代码</em> 等数据。<br>其中包含<strong>常量池</strong>： 用户存放编译器生成的各种字面量和符号引用。<br>异常状态： OutOfMemoryError</li></ul><a id="more"></a><ul><li><strong>堆（公有）</strong>： 是JVM所管理的内存中<strong>最大</strong>的一块。 唯一目的就是存放 <em>实例对象</em> ， 几乎所有的对象实例都在这里分配。 Java堆是<strong>垃圾收集器管理的主要区域</strong>， 因此很多时候也被称为“GC堆”。<br>异常状态：OutOfMemoryError</li><li><strong>虚拟机栈（线程私有）</strong>： 描述的是Java方法执行的内存模型： 每个方法在执行时都会创建一个栈帧， 用户存储 <em>局部变量表， 操作数栈， 动态链接， 方法出口</em> 等信息。每一个方法从调用直至完成的过程， 就对应着一个栈帧在虚拟机栈中入栈到出栈的过程。<br>异常状态：OutOfMemoryError、StackOverflowError</li><li><strong>本地方法栈（线程私有）</strong>: 与虚拟机栈所发挥的作用相似。 它们之间的区别不过是虚拟机栈为虚拟机执行Java方法， 而本地方法栈为虚拟机使用到的Native方法。<br>异常状态：OutOfMemoryError、StackOverflowError</li><li><strong>程序计数器（线程私有）</strong>： 一块较小的内存， 当前线程所执行的字节码的行号指示器。 字节码解释器工作时， 就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。<br>异常状态：无（唯一一个没有规定任何OutOfMemoryError情况的区域）<br><img src="/images/img_java_memory_area.png" alt="img_java_memory_area"></li></ul><h2 id="二、Java-内存模型"><a href="#二、Java-内存模型" class="headerlink" title="二、Java 内存模型"></a>二、Java 内存模型</h2><h3 id="1-目的"><a href="#1-目的" class="headerlink" title="1. 目的"></a>1. 目的</h3><p>　　屏蔽掉各种硬件和操作系统的内存访问差异， 以实现让java程序在各种平台下都能达到一致的内存访问效果。</p><h3 id="2-内容"><a href="#2-内容" class="headerlink" title="2. 内容"></a>2. 内容</h3><ul><li>所有的变量都存储在<strong>主内存</strong>中。</li><li>每条线程中还有自己的<strong>工作内存</strong>， 工作内存中保存了被该线程所使用到的变量（这些变量是从主内存中拷贝而来） 。</li><li>线程对变量的所有操作（读取、赋值）都必须在工作内存中进行。</li><li>不同线程之间无法直接访问对方工作内存中的变量。</li><li>线程间变量值的传递均需要通过主内存来完成。<br><img src="/images/img_java_memory_model.png" alt="img_java_memory_model"></li></ul>]]></content>
     
     <summary type="html">
     
-      
-      
-        &lt;h2 id=&quot;一、Java-内存区域&quot;&gt;&lt;a href=&quot;#一、Java-内存区域&quot; class=&quot;headerlink&quot; title=&quot;一、Java 内存区域&quot;&gt;&lt;/a&gt;一、Java 内存区域&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;方法区（公有）&lt;/strong&gt;： 用户
-      
+      &lt;h2 id=&quot;一、Java-内存区域&quot;&gt;&lt;a href=&quot;#一、Java-内存区域&quot; class=&quot;headerlink&quot; title=&quot;一、Java 内存区域&quot;&gt;&lt;/a&gt;一、Java 内存区域&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;方法区（公有）&lt;/strong&gt;： 用户存储已被虚拟机加载的 &lt;em&gt;类信息， 常量， 静态常量， 即时编译器编译后的代码&lt;/em&gt; 等数据。&lt;br&gt;其中包含&lt;strong&gt;常量池&lt;/strong&gt;： 用户存放编译器生成的各种字面量和符号引用。&lt;br&gt;异常状态： OutOfMemoryError&lt;/li&gt;
+&lt;/ul&gt;
     
     </summary>
     
@@ -161,6 +205,29 @@
     
     
       <category term="Android" scheme="https://lvmdu.gitee.io/tags/Android/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>专业基础知识之操作系统</title>
+    <link href="https://lvmdu.gitee.io/2020/02/28/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    <id>https://lvmdu.gitee.io/2020/02/28/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</id>
+    <published>2020-02-28T13:23:00.000Z</published>
+    <updated>2020-03-01T13:51:51.463Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="1-进程与线程的区别"><a href="#1-进程与线程的区别" class="headerlink" title="1. 进程与线程的区别"></a>1. 进程与线程的区别</h3><p><strong>进程</strong>： 是系统进行资源分配和调度的一个独立单位。 引入进程是为了使多个程序可以并发的执行， 以提高系统的资源利用率和吞吐量。<br><strong>线程</strong>： 是比进程更小的可独立运行的基本单位， 可以看做是轻量级的进程。 引入目的是为了减少程序在并发执行过程中的开销。</p><a id="more"></a><p>两者区别：</p><ul><li>开销：进程之间的切换会产生更大的开销</li><li>内存分配：系统在运行时会为每个进程分配不同的内存空间；而系统不会为线程分配内存，线程所使用的的资源来自其所属进程的资源，线程之间只能共享资源</li><li>包含关系：一个进程可以有多个线程</li></ul><h3 id="2-进程的状态转换"><a href="#2-进程的状态转换" class="headerlink" title="2. 进程的状态转换"></a>2. 进程的状态转换</h3><p><img src="/images/img_process_state_change.png" alt="img_process_state_change"><br>就绪状态 -&gt; 运行状态： 处于就绪状态的进程被调度后， 获得处理机资源（分派处理机时间片） ， 于是进程由就绪状态转换为运行状态。<br>运行状态 -&gt; 就绪状态： 处于运行状态的进程在时间片用完后， 不得不让出处理机， 从而进程由运行状态转换为就绪状态。 此外， 在可剥夺的操作系统中， 当有更高优先级的进程就绪时， 调度程度将正执行的进程转换为就绪状态， 让更高优先级的进程执行。<br>运行状态 -&gt; 阻塞状态： 当进程请求某一资源（如外设） 的使用和分配或等待某一事件的发生（如I/O操作的完成） 时， 它就从运行状态转换为阻塞状态。<br>阻塞状态 -&gt; 就绪状态： 当进程等待的事件到来时， 如I/O操作结束或中断结束时， 中断处理程序必须把相应进程的状态由阻塞状态转换为就绪状态。</p><h3 id="3-死锁"><a href="#3-死锁" class="headerlink" title="3. 死锁"></a>3. 死锁</h3><p>　　死锁是指两个或两个以上的线程在执行过程中，由于竞争资源或者由于彼此通信而造成的一种阻塞的现象，若无外力作用，它们都将无法推进下去。</p><h4 id="（1）死锁产生的必要条件"><a href="#（1）死锁产生的必要条件" class="headerlink" title="（1）死锁产生的必要条件"></a>（1）死锁产生的必要条件</h4><ul><li><strong>互斥条件</strong>：进程对所分配的资源进行排他性的使用</li><li><strong>请求和保持条件</strong>：进程被阻塞的时候并不释放锁申请到的资源</li><li><strong>不可剥夺条件</strong>：进程对于已经申请到的资源在使用完成之前不可以被剥夺</li><li><strong>环路等待条件</strong>：发生死锁的时候存在的一个 进程-资源 环形等待链</li></ul><h4 id="（2）死锁产生的原因"><a href="#（2）死锁产生的原因" class="headerlink" title="（2）死锁产生的原因"></a>（2）死锁产生的原因</h4><p>1） 竞争资源： 请求同一有限资源的进程数多于可用资源数<br>2） 进程推进顺序非法： 进程执行中， 请求和释放资源顺序不合理， 如资源等待链</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;1-进程与线程的区别&quot;&gt;&lt;a href=&quot;#1-进程与线程的区别&quot; class=&quot;headerlink&quot; title=&quot;1. 进程与线程的区别&quot;&gt;&lt;/a&gt;1. 进程与线程的区别&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;进程&lt;/strong&gt;： 是系统进行资源分配和调度的一个独立单位。 引入进程是为了使多个程序可以并发的执行， 以提高系统的资源利用率和吞吐量。&lt;br&gt;&lt;strong&gt;线程&lt;/strong&gt;： 是比进程更小的可独立运行的基本单位， 可以看做是轻量级的进程。 引入目的是为了减少程序在并发执行过程中的开销。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="专业基础知识" scheme="https://lvmdu.gitee.io/categories/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"/>
+    
+    
+      <category term="操作系统" scheme="https://lvmdu.gitee.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
     
   </entry>
   
@@ -454,80 +521,6 @@
     
     
       <category term="算法" scheme="https://lvmdu.gitee.io/tags/%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Android四大组件之Service</title>
-    <link href="https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BService/"/>
-    <id>https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BService/</id>
-    <published>2020-02-26T09:33:00.000Z</published>
-    <updated>2020-02-27T08:21:25.698Z</updated>
-    
-    <content type="html"><![CDATA[<p>　　<strong>服务（Service）</strong> 是一种可以在后台执行长时间运行操作而没有用户界面的组件。<br>　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。　　</p><a id="more"></a><p><strong>注意：</strong></p><ol><li><strong>Service默认运行在UI线程（主线程）中， 因此， 不要在Service中执行耗时的操作。</strong>　除非在Service中创建子线程。</li><li>Android的后台就是指它的运行是完全不依赖UI（线程）。即使Activity被销毁，或者程序被关闭，只要进程还在，Service就可以继续运行。</li></ol><h2 id="一、生命周期"><a href="#一、生命周期" class="headerlink" title="一、生命周期"></a>一、生命周期</h2><p><img src="/images/img_service_life_cycle.png" alt="img_service_life_cycle"></p><h3 id="1-startService-stopService"><a href="#1-startService-stopService" class="headerlink" title="1.startService / stopService"></a>1.startService / stopService</h3><p><strong>生命周期顺序： onCreate-&gt;onStartCommand-&gt;onDestroy</strong><br>　　如果一个Service被某个Activity 调用 Context.startService方法启动， 那么不管是否有Activity使用bindService绑定或unbindService解除绑定到该Service， 该Service都在后台运行， 直到被调用stopService， 或自身的stopSelf方法。 当然如果系统资源不足， android系统也可能结束服务， 还有一种方法可以关闭服务， 在设置中， 通过应用-&gt;找到自己应用-&gt;停止。<br><strong>注意点：</strong><br>①第一次 startService 会触发 onCreate 和 onStartCommand， 以后在服务运行过程中， 每次 startService 都<strong>只会触发 onStartCommand</strong><br>②不论 startService 多少次， stopService 一次就会停止服务</p><h3 id="2-bindService-unbindService"><a href="#2-bindService-unbindService" class="headerlink" title="2.bindService / unbindService"></a>2.bindService / unbindService</h3><p><strong>生命周期顺序： onCreate-&gt;onBind-&gt;onUnBind-&gt;onDestroy</strong><br>　　如果一个Service在某个Activity中被调用bindService方法启动， 不论bindService被调用几次， Service的onCreate方法只会执行一次， 同时onStartCommand方法始终不会调用。<br>当建立连接后， Service会一直运行， 除非调用unbindService来接触绑定、 断开连接或调用该Service的Context不存在了（如Activity被Finish——即<strong>通过bindService启动的Service的生命周期依附于启动它的Context</strong>）， 系统在这时会自动停止该Service。<br><strong>注意点：</strong><br>第一次 bindService 会触发 onCreate 和 onBind， 以后在服务运行过程中， 每次 bindService 都<strong>不会触发任何回调</strong></p><h3 id="3-混合型（上面两种方式的交互）"><a href="#3-混合型（上面两种方式的交互）" class="headerlink" title="3.混合型（上面两种方式的交互）"></a>3.混合型（上面两种方式的交互）</h3><p>　　当一个Service在被启动(startService)的同时又被绑定(bindService)， 该Service将会一直在后台运行， 并且不管调用几次， onCreate方法始终只会调用一次， onStartCommand的调用次数与startService调用的次数一致（使用bindService方法不会调用onStartCommand）。 同时， 调用unBindService将不会停止Service， 必须调用stopService或Service自身的stopSelf来停止服务。</p><h2 id="二、启动方式"><a href="#二、启动方式" class="headerlink" title="二、启动方式"></a>二、启动方式</h2><h3 id="1-startService"><a href="#1-startService" class="headerlink" title="1. startService"></a>1. startService</h3><p>首先，在AndroidManifest文件中进行注册。<br>(1)服务端，创建BindService并继承自Service。<br>(2)客户端，通过startService()方法启动服务。</p><h3 id="2-bindService"><a href="#2-bindService" class="headerlink" title="2. bindService"></a>2. bindService</h3><p>首先，在AndroidManifest文件中进行注册。<br>(1)服务端，创建BindService并继承自Service；创建一个实现IBindler接口的实例对象，并提供公共方法给客户端调用；从onBind()回调方法返回此Binder实例。<br>(2)客户端，创建一个ServiceConnection对象，并在其onServiceConnected()回调方法中接收Binder对象；然后通过bindService()方法绑定服务。</p><h2 id="三、类型"><a href="#三、类型" class="headerlink" title="三、类型"></a>三、类型</h2><h3 id="1-按运行位置："><a href="#1-按运行位置：" class="headerlink" title="1. 按运行位置："></a>1. 按运行位置：</h3><ul><li>本地服务（Local Service）：服务依附于主进程</li><li>远程服务（Remote Service）：服务为独立的进程<h3 id="2-按运行类型："><a href="#2-按运行类型：" class="headerlink" title="2. 按运行类型："></a>2. 按运行类型：</h3></li><li>前台服务：通知栏显示Notification，如天气更新、日期同步等</li><li>后台服务：通知栏不显示Notification，如音乐播放器<h3 id="3-按启动方式："><a href="#3-按启动方式：" class="headerlink" title="3. 按启动方式："></a>3. 按启动方式：</h3></li><li>startService启动的服务</li><li>bindService启动的服务</li><li>同时用两种方式启动的服务</li></ul><h2 id="四、Service和Thread的区别"><a href="#四、Service和Thread的区别" class="headerlink" title="四、Service和Thread的区别"></a>四、Service和Thread的区别</h2><p>　　本质上来说，两者没有任何关系，它们是完全不同的概念。</p><ol><li>定义上：</li></ol><ul><li>Thread：Thread是程序执行的最小单元，它是分配CPU的基本单位。可以用Thread来执行一些异步的操作。</li><li>Service：Service是android的一种机制，当它运行的时候如果是Local Service，那么对应的Service是运行在<strong>主进程的主线程上</strong>；如果是Remote Service，那么对应的Service则是运行在<strong>独立进程的主线程上</strong>。</li></ul><ol start="2"><li>使用上：</li></ol><ul><li>Thread的运行是独立的，也就是说当一个Activity被finish之后，如果没有主动停止Thread或者Thread里的run方法没有执行完毕的话，Thread也会一直执行。 这样会导致的问题：1) 当Activity被finish之后，不再持有该Thread的引用，也就是不能再控制该Thread。2）没有办法在不同的Activity中对同一Thread进行控制。</li><li>所有的Activity都可以与Service进行关联，也就是说多个Activity可以同时控制同一个Service，然后可以很方便地操作其中的方法，即使Activity被销毁了，之后只要重新与Service建立关联，就又能够获取到原有的Service中Binder的实例。因此，使用Service来处理后台任务，Activity就可以放心地finish，完全不需要担心无法对后台任务进行控制的情况。</li></ul><p><strong>什么时候使用Service，什么时候使用Thread呢?</strong><br>（1）在应用中，如果是<strong>长时间的在后台运行，而且不需要交互</strong>的情况下，使用<strong>Service</strong>。<br>（2）在后台运行，不需要交互的情况下，如果只是完成某个任务，之后就不需要运行，而且可能是多个任务，需要长时间运行的情况下，使用<strong>Thread</strong>。<br>（3）如果任务占用CPU时间多，资源大的情况下，使用<strong>Thread</strong>。</p><h2 id="五、IntentService"><a href="#五、IntentService" class="headerlink" title="五、IntentService"></a>五、IntentService</h2><p> 　　继承于Service，内部有一个HandlerThread对象，可以看做是Service和HandlerThread的结合体。</p><h3 id="1-特点："><a href="#1-特点：" class="headerlink" title="1. 特点："></a>1. 特点：</h3><ul><li>在IntentService<strong>内有一个工作线程</strong>来处理耗时操作。</li><li>当任务执行完后，IntentService 会自动停止，不需要我们去手动结束。</li><li>如果启动 IntentService 多次，那么每一个耗时操作会以工作队列的方式在 IntentService 的 onHandleIntent 回调方法中执行，依次去执行，使用串行的方式，执行完自动结束。</li></ul><h3 id="2-工作流程"><a href="#2-工作流程" class="headerlink" title="2. 工作流程"></a>2. 工作流程</h3><p><img src="/images/img_service_intent_service.jpg" alt="img_service_intent_service"></p><p> <strong>注意：</strong> 若启动IntentService多次， 那么每个耗时操作则以队列的方式在IntentService的onHandleIntent回调方法中依次执行， 执行完自动结束。</p><p> <strong>启动IntentService为什么不需要新建线程？</strong><br>　　IntentService内部的HandlerThread继承自Thread，内部封装了Looper，在这里新建线程并启动，所以启动IntentService不需要新建线程。</p><p><strong>为什么多次启动 IntentService 会顺序执行事件，停止服务后，后续的事件得不到执行？</strong><br>　　IntentService 中使用的 Handler、Looper、MessageQueue 机制把消息发送到线程中去执行的，所以<strong>多次启动IntentService不会重新创建新的服务和新的线程</strong>，只是把消息加入消息队列中等待执行，而如果服务停止，会清除消息队列中的消息，后续的事件得不到执行。</p><h3 id="3-使用场景"><a href="#3-使用场景" class="headerlink" title="3. 使用场景"></a>3. 使用场景</h3><ul><li>线程任务需要按顺序、 在后台执行的使用场景</li></ul><p><em>最常见的场景：离线下载</em></p><ul><li>由于所有的任务都在同一个Thread looper里面来做， 所以不符合多个数据同时请求的场景。</li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;　　&lt;strong&gt;服务（Service）&lt;/strong&gt; 是一种可以在后台执行长时间运行操作而没有用户界面的组件。&lt;br&gt;　　比如说一些应用程序，始终需要与服务器之间始终保持着心跳连接，就可以使用Service来实现。
-　　&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Android基础" scheme="https://lvmdu.gitee.io/categories/Android%E5%9F%BA%E7%A1%80/"/>
-    
-    
-      <category term="Android" scheme="https://lvmdu.gitee.io/tags/Android/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Android四大组件之Activity</title>
-    <link href="https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BActivity/"/>
-    <id>https://lvmdu.gitee.io/2020/02/26/Android%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%E4%B9%8BActivity/</id>
-    <published>2020-02-26T07:51:00.000Z</published>
-    <updated>2020-02-28T00:34:30.813Z</updated>
-    
-    <content type="html"><![CDATA[<p>　　<strong>活动（Activity）</strong> 是一种可以包含用户界面的组件，主要用于和用户进行交互。</p><a id="more"></a><h2 id="一、生命周期"><a href="#一、生命周期" class="headerlink" title="一、生命周期"></a>一、生命周期</h2><p><img src="/images/img_activity_life_cycle.jpg" alt="img_activity_life_cycle"></p><p>同时，生命周期也对应了Activity的<strong>四种状态</strong>：</p><p>1) 运行状态(Running)<br>2) 暂停状态(Paused)<br>3) 停止状态(Stopped)<br>4) 销毁状态(Killed)</p><p><strong>注意</strong><br>onStart()和onResume()区别：</p><ul><li>onStart()：前台不可见，不能进行交互</li><li>onResume()：前台可见，可以进行交互</li></ul><h3 id="特定场景下的生命周期回调："><a href="#特定场景下的生命周期回调：" class="headerlink" title="特定场景下的生命周期回调："></a>特定场景下的生命周期回调：</h3><p>（1）用户打开新的Activiy的时候，之前的Activity： onPause()-&gt;onStop()<br>（2）按Back键回退时： onPause()-&gt;onStop()-&gt;onDestory()<br>（3）按Home键切换到桌面后又回到该Actitivy： onPause()-&gt;onStop()-&gt;onRestart()-&gt;onStart()-&gt;onResume()<br>（4）调用finish()方法： onDestory()<br>（5）横竖屏切换：onPause()-&gt;onSaveInstanceState()-&gt; onStop()-&gt;onDestroy()-&gt;onCreate()-&gt;onStart()-&gt;onRestoreInstanceState()-&gt;onResume()</p><h4 id="onSaveInstanceState和onRestoreInstanceState"><a href="#onSaveInstanceState和onRestoreInstanceState" class="headerlink" title="onSaveInstanceState和onRestoreInstanceState"></a>onSaveInstanceState和onRestoreInstanceState</h4><p>　　在Activity由于异常情况下终止时， 系统会调用<strong>onSaveInstanceState</strong>来保存当前Activity的状态。 当异常终止的Activity被重建以后， 系统会调用<strong>onRestoreInstanceState</strong>， 并且把Activity销毁时onSaveInstanceState方法所保存的Bundle对象参数同时传递给onRestoreInstanceState和onCreate方法。<br>onCreate和onRestoreInstanceState方法来恢复Activity的状态的区别：<br>onRestoreInstanceState回调则表明其中Bundle对象非空， 不用加非空判断； onCreate需要非空判断。 建议使用onRestoreInstanceState。<br><strong>调用时机：</strong></p><ul><li>onSaveInstanceState()：onStop()之前</li><li>onRestoreInstanceState()：onStart()之后</li></ul><p>通过在AndroidManifest文件的Activity中指定如下属性：</p><blockquote><p>android:configChanges = “orientation|screenSize”</p></blockquote><p>来避免横竖屏切换时， Activity的销毁和重建。<br>而是回调了下面的方法：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onConfigurationChanged</span><span class="params">(Configuration newConfig)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onConfigurationChanged(newConfig);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="二、启动模式"><a href="#二、启动模式" class="headerlink" title="二、启动模式"></a>二、启动模式</h2><h3 id="1-标准模式（Standard）"><a href="#1-标准模式（Standard）" class="headerlink" title="1. 标准模式（Standard）"></a>1. 标准模式（Standard）</h3><p>　　每启动一次Activity，就会创建一个新的Activity实例并置于栈顶。</p><h3 id="2-栈顶复用模式（SingleTop）"><a href="#2-栈顶复用模式（SingleTop）" class="headerlink" title="2. 栈顶复用模式（SingleTop）"></a>2. 栈顶复用模式（SingleTop）</h3><p>　　如果需要新建的Activity位于任务栈栈顶，那么此Activity的实例就不会重建，而是重用栈顶的实例。<br><strong>应用场景：</strong><br>（1）在通知栏点击收到的通知，然后需要启动一个Activity，这个Activity就可以用singleTop，否则每次点击都会新建一个Activity。<br>（2）某个场景下连续快速点击，启动了两个Activity。如果这个时候待启动的Activity使用SingleTop模式可以避免这个Bug。</p><h3 id="3-栈内复用模式（SingleTask）"><a href="#3-栈内复用模式（SingleTask）" class="headerlink" title="3. 栈内复用模式（SingleTask）"></a>3. 栈内复用模式（SingleTask）</h3><p>　　该模式是一种<strong>单例模式</strong>，即<strong>一个栈内只有一个该Activity实例</strong>。该模式可以通过在AndroidManifest文件中Activity的android:taskAffinity属性的需要加载到那个栈中。<br>　　如果Activity指定的栈不存在，则创建一个栈，并把创建的Activity压入栈内。如果Activity指定的栈存在，如果其中没有该Activity实例，则会创建Activity并压入栈顶，如果其中有该Activity实例，则把该Activity实例之上的Activity清除出栈，重用并让该Activity实例处在栈顶。<br><strong>应用场景：</strong><br>　　大多数App的主页。对于大部分应用，当我们在主界面点击回退按钮的时候都是退出应用，那么当我们第一次进入主界面之后，主界面位于栈底，以后不管我们打开了多少个Activity，只要我们再次回到主界面，主界面Activity上所有的Activity都会被移除，从而主界面Activity处于栈顶。通过这种方式能够保证退出应用时所有的Activity都能销毁。</p><h3 id="4-单例模式（SingleInstance）"><a href="#4-单例模式（SingleInstance）" class="headerlink" title="4. 单例模式（SingleInstance）"></a>4. 单例模式（SingleInstance）</h3><p>　　一个栈中只有一个Activity的实例。<br>　　一旦该模式的Activity实例已经存在于某个栈中，任何应用再激活该Activity时都会重用该栈中的实例。<br><strong>应用场景：</strong><br>　　呼叫来电界面</p><h4 id="特殊情况："><a href="#特殊情况：" class="headerlink" title="* 特殊情况："></a>* 特殊情况：</h4><ol><li><p>前台栈和后台栈的交互<br>假如目前有两个任务栈。 前台任务栈为AB， 后台任务栈为CD， 这里假设CD的启动模式均为SingleTask,现在请求启动D， 那么这个后台的任务栈都会被切换到前台，这个时候整个后退列表就变成了ABCD。 当用户按Back返回时， 列表中的Activity会一一出栈， 如下图：<br><img src="/images/img_activity_1.jpg" alt="img_activity_1"><br>如果不是请求启动D而是启动C， 那么情况又不一样， 如下图：<br><img src="/images/img_activity_2.jpg" alt="img_activity_2"><br>　　<strong>调用SingleTask模式的后台任务栈中的Activity， 会把整个栈的Actvity压入当前栈的栈顶。</strong> SingleTask会具有ClearTop特性， 把之上的栈内Activity清除。</p></li><li><p>SingleInstance深入理解<br>（1）A：Standard  B：SingleInstance<br> 启动顺序：A -&gt; B -&gt; A<br> 回退顺序：A -&gt; A -&gt; B<br>（2）A：Standard  B：SingleInstance C：Standard<br> 启动顺序：A -&gt; B -&gt; C<br> 回退顺序：C -&gt; A -&gt; B</p></li></ol><p><strong>注意：</strong> 回退是按照该栈的压入顺序进行的，而不是按照启动顺序进行。</p><h2 id="三、启动流程"><a href="#三、启动流程" class="headerlink" title="三、启动流程"></a>三、启动流程</h2><p><img src="/images/img_activity_start.jpg" alt="img_activity_start"></p><ol><li>Activity1调用startActivity，实际会调用Instrumentation类的execStartActivity方法</li></ol><p>Instrumentation是系统用来监控Activity运行的一个类，提供各种Activity生命周期的控制方法。</p><ol start="2"><li><p>通过跨进程的binder调用，进入到ActivityManagerService中，其内部会处理Activity栈，通知Activity1 Pause，Activity1 执行Pause 后告知AMS</p></li><li><p>在ActivityManagerService中的startProcessLocked中调用了Process.start方法。并通过连接调用Zygote的native方法forkAndSpecialize，执行fork任务。之后再通过跨进程调用进入到Activity2所在的进程中。</p></li><li><p>主线程发起bind Application，AMS会做一些配置工作，然后让主线程bind ApplicationThread，ApplicationThread将启动Activity2的信息通过H对象发送给主线程。（发送的消息是EXECUTE_TRANSACTION，消息体是一个 ClientTransaction，即 LaunchActivityItem。）主线程拿到Activity2的信息后，调用Instrumentation类的newActivity方法，其内通过ClassLoader创建Activity2实例。</p></li></ol><p>ApplicationThread是一个binder对象，其运行在binder线程池中，内部包含一个H类，该类继承于类Handler。</p><ol start="5"><li>通知Activity2去performCreate(执行onCreate方法)。</li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;　　&lt;strong&gt;活动（Activity）&lt;/strong&gt; 是一种可以包含用户界面的组件，主要用于和用户进行交互。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Android基础" scheme="https://lvmdu.gitee.io/categories/Android%E5%9F%BA%E7%A1%80/"/>
-    
-    
-      <category term="Android" scheme="https://lvmdu.gitee.io/tags/Android/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>知识图谱(三) Android进阶知识</title>
-    <link href="https://lvmdu.gitee.io/2020/02/26/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1-3-Android%E8%BF%9B%E9%98%B6%E7%9F%A5%E8%AF%86/"/>
-    <id>https://lvmdu.gitee.io/2020/02/26/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1-3-Android%E8%BF%9B%E9%98%B6%E7%9F%A5%E8%AF%86/</id>
-    <published>2020-02-26T05:20:00.000Z</published>
-    <updated>2020-02-26T05:21:11.165Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="/images/img_mind_map_android_2.png" alt="img_mind_map_android_2"></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;img src=&quot;/images/img_mind_map_android_2.png&quot; alt=&quot;img_mind_map_android_2&quot;&gt;&lt;/p&gt;
-
-      
-    
-    </summary>
-    
-    
-      <category term="知识图谱" scheme="https://lvmdu.gitee.io/categories/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/"/>
-    
-    
-      <category term="脑图" scheme="https://lvmdu.gitee.io/tags/%E8%84%91%E5%9B%BE/"/>
     
   </entry>
   
