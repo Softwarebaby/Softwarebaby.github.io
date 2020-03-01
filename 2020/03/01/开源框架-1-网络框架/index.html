@@ -81,16 +81,16 @@
 
 
 
-<meta name="description" content="一、Volley1. 使用方法（1）通过Volley.newRequestQueue获取一个RequestQueue对象（2）创建一个Request(StringRequest&#x2F;JsonRequest&#x2F;ImageRequest)对象（3）将Request对象通过add方法添加到RequestQueue中 2. 原理 二. OkHttp1. 使用方法（1）通过Request.Builder创建一个R">
+<meta name="description" content="一、Volley1. 使用方法（1）通过Volley.newRequestQueue获取一个RequestQueue对象（2）创建一个Request(StringRequest&#x2F;JsonRequest&#x2F;ImageRequest)对象（3）将Request对象通过add方法添加到RequestQueue中">
 <meta property="og:type" content="article">
-<meta property="og:title" content="源码分析（一） 网络框架">
-<meta property="og:url" content="https://lvmdu.gitee.io/2020/03/01/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:title" content="开源框架（一） 网络框架">
+<meta property="og:url" content="https://lvmdu.gitee.io/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-1-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/index.html">
 <meta property="og:site_name" content="Flow Garden">
-<meta property="og:description" content="一、Volley1. 使用方法（1）通过Volley.newRequestQueue获取一个RequestQueue对象（2）创建一个Request(StringRequest&#x2F;JsonRequest&#x2F;ImageRequest)对象（3）将Request对象通过add方法添加到RequestQueue中 2. 原理 二. OkHttp1. 使用方法（1）通过Request.Builder创建一个R">
+<meta property="og:description" content="一、Volley1. 使用方法（1）通过Volley.newRequestQueue获取一个RequestQueue对象（2）创建一个Request(StringRequest&#x2F;JsonRequest&#x2F;ImageRequest)对象（3）将Request对象通过add方法添加到RequestQueue中">
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_volley.png">
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_okhttp.png">
 <meta property="article:published_time" content="2020-03-01T02:40:00.000Z">
-<meta property="article:modified_time" content="2020-03-01T03:48:34.610Z">
+<meta property="article:modified_time" content="2020-03-01T03:55:20.921Z">
 <meta property="article:author" content="Bob Du">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -124,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="https://lvmdu.gitee.io/2020/03/01/源码分析-网络框架/"/>
+  <link rel="canonical" href="https://lvmdu.gitee.io/2020/03/01/开源框架-1-网络框架/"/>
 
 
 
 
 
-  <title>源码分析（一） 网络框架 | Flow Garden</title>
+  <title>开源框架（一） 网络框架 | Flow Garden</title>
   
 
 
@@ -307,7 +307,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://lvmdu.gitee.io/2020/03/01/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/">
+    <link itemprop="mainEntityOfPage" href="https://lvmdu.gitee.io/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-1-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Bob Du">
@@ -324,7 +324,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">源码分析（一） 网络框架</h1>
+          <h1 class="post-title" itemprop="name headline">开源框架（一） 网络框架</h1>
         
 
         <div class="post-meta">
@@ -433,6 +433,8 @@
 
       
         <h2 id="一、Volley"><a href="#一、Volley" class="headerlink" title="一、Volley"></a>一、Volley</h2><h3 id="1-使用方法"><a href="#1-使用方法" class="headerlink" title="1. 使用方法"></a>1. 使用方法</h3><p>（1）通过Volley.newRequestQueue获取一个RequestQueue对象<br>（2）创建一个Request(StringRequest/JsonRequest/ImageRequest)对象<br>（3）将Request对象通过add方法添加到RequestQueue中</p>
+<a id="more"></a>
+
 <h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h3><p><img src="/images/img_volley.png" alt="img_volley"></p>
 <h2 id="二-OkHttp"><a href="#二-OkHttp" class="headerlink" title="二. OkHttp"></a>二. OkHttp</h2><h3 id="1-使用方法-1"><a href="#1-使用方法-1" class="headerlink" title="1. 使用方法"></a>1. 使用方法</h3><p>（1）通过Request.Builder创建一个Request对象<br>（2）创建一个OkHttpClient对象<br>（3）将Request传入OkHttpClient对象中(mOkHttpClient.newCall(request))，来创建一个Call对象<br>(4)调用Call对象的execute(同步)/enqueue(异步)方法来执行</p>
 <h3 id="2-原理-1"><a href="#2-原理-1" class="headerlink" title="2. 原理"></a>2. 原理</h3><p><img src="/images/img_okhttp.png" alt="img_okhttp"></p>
@@ -498,7 +500,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://lvmdu.gitee.io/2020/03/01/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/" title="源码分析（一） 网络框架">https://lvmdu.gitee.io/2020/03/01/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/</a>
+    <a href="https://lvmdu.gitee.io/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-1-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/" title="开源框架（一） 网络框架">https://lvmdu.gitee.io/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-1-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
