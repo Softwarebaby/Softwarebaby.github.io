@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="网络," />
+  <meta name="keywords" content="Android," />
 
 
 
@@ -81,21 +81,17 @@
 
 
 
-<meta name="description" content="1. 网络分层体系结构">
+<meta name="description" content="一、布局优化① 删除布局中无用的控件和层次， 其次有选择地使用性能比较低的ViewGroup">
 <meta property="og:type" content="article">
-<meta property="og:title" content="专业基础知识之计算机网络">
-<meta property="og:url" content="https://lvmdu.gitee.io/2020/02/28/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:title" content="Android性能优化">
+<meta property="og:url" content="https://lvmdu.gitee.io/2020/02/29/Android%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/index.html">
 <meta property="og:site_name" content="Flow Garden">
-<meta property="og:description" content="1. 网络分层体系结构">
-<meta property="og:image" content="https://lvmdu.gitee.io/images/img_web.jpg">
-<meta property="og:image" content="https://lvmdu.gitee.io/images/img_tcp_udp.jpg">
-<meta property="og:image" content="https://lvmdu.gitee.io/images/img_tcp.png">
-<meta property="article:published_time" content="2020-02-28T12:08:00.000Z">
-<meta property="article:modified_time" content="2020-03-01T02:28:42.801Z">
+<meta property="og:description" content="一、布局优化① 删除布局中无用的控件和层次， 其次有选择地使用性能比较低的ViewGroup">
+<meta property="article:published_time" content="2020-02-29T08:19:00.000Z">
+<meta property="article:modified_time" content="2020-03-01T01:42:20.860Z">
 <meta property="article:author" content="Bob Du">
-<meta property="article:tag" content="网络">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://lvmdu.gitee.io/images/img_web.jpg">
 
 
 
@@ -125,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="https://lvmdu.gitee.io/2020/02/28/专业基础知识之计算机网络/"/>
+  <link rel="canonical" href="https://lvmdu.gitee.io/2020/02/29/Android性能优化/"/>
 
 
 
 
 
-  <title>专业基础知识之计算机网络 | Flow Garden</title>
+  <title>Android性能优化 | Flow Garden</title>
   
 
 
@@ -308,7 +304,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://lvmdu.gitee.io/2020/02/28/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">
+    <link itemprop="mainEntityOfPage" href="https://lvmdu.gitee.io/2020/02/29/Android%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Bob Du">
@@ -325,7 +321,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">专业基础知识之计算机网络</h1>
+          <h1 class="post-title" itemprop="name headline">Android性能优化</h1>
         
 
         <div class="post-meta">
@@ -337,8 +333,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-28T20:08:00+08:00">
-                2020-02-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-29T16:19:00+08:00">
+                2020-02-29
               </time>
             
 
@@ -360,8 +356,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index">
-                    <span itemprop="name">专业基础知识</span>
+                  <a href="/categories/Android%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index">
+                    <span itemprop="name">Android进阶</span>
                   </a>
                 </span>
 
@@ -396,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.2k
+                  427
                 </span>
               
 
@@ -412,7 +408,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  1
                 </span>
               
             </div>
@@ -433,63 +429,23 @@
       
 
       
-        <h3 id="1-网络分层体系结构"><a href="#1-网络分层体系结构" class="headerlink" title="1. 网络分层体系结构"></a>1. 网络分层体系结构</h3><p><img src="/images/img_web.jpg" alt="img_web"></p>
+        <h2 id="一、布局优化"><a href="#一、布局优化" class="headerlink" title="一、布局优化"></a>一、布局优化</h2><p>① 删除布局中无用的控件和层次， 其次有选择地使用性能比较低的ViewGroup</p>
 <a id="more"></a>
 
+<p>　　例如： 如果布局中既可以使用LinearLayout也可以使用RelativeLayout， 那么就采用LinearLayout， 这是因为RelativeLayout的功能比较复杂， 它的布局过程需要花费更<br>多的CPU时间。<br>② 采用&lt;include&gt; 标签、&lt;merge&gt; 标签和ViewStub</p>
 <ul>
-<li>应用层：提供用户与网络交互的接口，定义了应用程序间通信和交互的规则。—— HTTP、FTP、POP、SMTP</li>
-<li>运输层：负责不同主机进程之间的数据传输。—— TCP、UDP</li>
-<li>网络层：负责不同主机之间的数据传输。—— IP</li>
-<li>数据链路层：负责相邻结点之间的数据传输。—— PPP</li>
-<li>物理层：在物理介质上的传输。</li>
+<li>&lt;include&gt; 标签：布局重用</li>
+<li>&lt;merge&gt; 标签：减少布局层级</li>
+<li>ViewStub：按需加载</li>
 </ul>
-<p><strong>PDU（协议数据单元）：</strong></p>
-<ul>
-<li>应用层：各应用报文</li>
-<li>运输层：TCP/UDP数据段</li>
-<li>网络层：IP数据包</li>
-<li>数据链路层：帧</li>
-<li>物理层：比特</li>
-</ul>
-<h3 id="2-GET-和-POST-两种请求方式的区别"><a href="#2-GET-和-POST-两种请求方式的区别" class="headerlink" title="2. GET 和 POST 两种请求方式的区别"></a>2. GET 和 POST 两种请求方式的区别</h3><p>（1）URL可见性</p>
-<ul>
-<li>get：URL参数可见</li>
-<li>post：URL参数不可见</li>
-</ul>
-<p>（2）数据传输</p>
-<ul>
-<li>get：通过拼接URL进行传递参数</li>
-<li>post：通过Body体传递参数</li>
-</ul>
-<p>（3）缓存性</p>
-<ul>
-<li>get：可缓存</li>
-<li>post：不可缓存</li>
-</ul>
-<p>（4）后退页面的反应</p>
-<ul>
-<li>get：页面后退后，不产生影响</li>
-<li>post：页面后退后，会重新提交请求</li>
-</ul>
-<p>（5）传输数据的大小</p>
-<ul>
-<li>get：有限制（一般不超过2k-4k）</li>
-<li>post：没有限制</li>
-</ul>
-<p>（6）安全性</p>
-<ul>
-<li>get：不安全（URL参数可见）</li>
-<li>post：安全</li>
-</ul>
-<h3 id="3-TCP-和-UDP-的区别"><a href="#3-TCP-和-UDP-的区别" class="headerlink" title="3. TCP 和 UDP 的区别"></a>3. TCP 和 UDP 的区别</h3><p>主要区别：<br><strong>TCP：</strong><br>1）<strong>面向连接的</strong>，连接的建立需要三次握手，；连接的释放需要四次挥手<br>2）<strong>面向字节流</strong>，会把上层传输下来的数据当作是无结构的字节流<br>3）<strong>一对一通信</strong><br>4）<strong>能够保证可靠传输</strong>，具有超时重传机制，并有数据校验<br><strong>UDP：</strong><br>1）<strong>无连接的</strong>，一方向另一方发送数据不需要建立连接<br>2）<strong>面向报文</strong>，从上层接受的数据如果报文不大于传输限制，则直接加上首部；如果过大，则进行IP分片后，再加上首部进行传输<br>3）<strong>可以一对一通信，也可以一对多通信</strong><br>4）<strong>不保证可靠传输</strong>，仅仅是尽最大努力交付</p>
-<p>详细区别：<br><img src="/images/img_tcp_udp.jpg" alt="img_tcp_udp"></p>
-<p><strong>什么时候应该使用TCP？</strong><br>当对网络通讯质量有要求的时候， 比如： 整个数据要准确无误的传递给对方， 这往往用于一些要求可靠的应用， 比如HTTP、 HTTPS、 FTP等传输文件的协议， POP、 SMTP等邮件传输的协议。</p>
-<p><strong>什么时候应该使用UDP？</strong><br>当对网络通讯质量要求不高的时候， 要求网络通讯速度能尽量的快， 这时就可以使用UDP。比如DNS域名系统。</p>
-<h3 id="4-TCP连接的建立与终止"><a href="#4-TCP连接的建立与终止" class="headerlink" title="4. TCP连接的建立与终止"></a>4. TCP连接的建立与终止</h3><p><img src="/images/img_tcp.png" alt="img_tcp"></p>
-<h4 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h4><p>• 第一次握手： 建立连接。 客户端发送连接请求报文段， 将 SYN 设置为 1、 Sequence Number（seq）为 x； 接下来客户端进入 SYN_SENT 状态， 等待服务端的确认。<br>• 第二次握手： 服务器收到客户端的 SYN 报文段， 对 SYN 报文段进行确认， 设置 Acknowledgment Number（ACK） 为 x+1（seq+1） ； 同时自己还要发送 SYN 请求信息， 将 SYN 设置为1、 seq 为 y。 服务端将上述所有信息放到 SYN+ACK 报文段中， 一并发送给客户端， 此时服务端进入 SYN_RCVD 状态。<br>• 第三次握手： 客户端收到服务端的 SYN+ACK 报文段； 然后将 ACK 设置为 y+1， 向服务端发送 ACK 报文段， 这个报文段发送完毕后， 客户端和服务端都进入 ESTABLISHED （TCP连接成功） 状态。</p>
-<p><strong>为什么要三次握手？</strong><br>　　为了防止已失效的连接请求报文段突然又传送到了服务端， 因而产生错误。</p>
-<h4 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h4><p>• 第一次挥手： 客户端设置 seq 和 ACK， 向服务端发送一个 FIN 报文段。 此时， 客户端进入 FIN_WAIT_1 状态， 表示客户端没有数据要发送给服务端了。<br>• 第二次挥手： 服务端收到了客户端发送的 FIN 报文段， 向客户端回了一个 ACK 报文段。<br>• 第三次挥手： 服务端向客户端发送 FIN 报文段， 请求关闭连接， 同时服务端进入 LAST_ACK 状态。<br>• 第四次挥手： 客户端收到服务端发送的 FIN 报文段， 向服务端发送 ACK 报文段， 然后客户端进入 TIME_WAIT 状态。 服务端收到客户端的 ACK 报文段以后， 就关闭连接。 此时， 客户端等待 2MSL（最大报文段生存时间） 后依然没有收到回复， 则说明服务端已正常关闭， 这样客户端也可以关闭连接了。</p>
-<p><strong>为什么要四次挥手？</strong><br>　　为了保证在最后断开的时候，客户端能够发送最后一个ACK报文段能够被服务器接收到，从而避免在下一个连接中出现上一个连接的滞留的报文。</p>
+<p>③ 避免多度绘制</p>
+<h2 id="二、绘制优化"><a href="#二、绘制优化" class="headerlink" title="二、绘制优化"></a>二、绘制优化</h2><p>① onDraw中不要创建新的局部对象<br>② onDraw方法中不要做耗时的任务</p>
+<h2 id="三、内存泄漏优化"><a href="#三、内存泄漏优化" class="headerlink" title="三、内存泄漏优化"></a>三、内存泄漏优化</h2><p>① 在开发过程中避免写出有内存泄漏的代码<br>② 通过一些分析工具比如MAT来找出潜在的内存泄露</p>
+<h2 id="四、响应速度优化"><a href="#四、响应速度优化" class="headerlink" title="四、响应速度优化"></a>四、响应速度优化</h2><p>核心思想：避免在主线程中做耗时操作</p>
+<h2 id="五、ListView-RecycleView及Bitmap优化"><a href="#五、ListView-RecycleView及Bitmap优化" class="headerlink" title="五、ListView/RecycleView及Bitmap优化"></a>五、ListView/RecycleView及Bitmap优化</h2><h4 id="ListView-RecycleView："><a href="#ListView-RecycleView：" class="headerlink" title="ListView/RecycleView："></a>ListView/RecycleView：</h4><p>① 使用ViewHolder模式来提高效率<br>② 异步加载： 耗时的操作放在异步线程中<br>③ ListView/RecycleView的滑动时停止加载和分页加载</p>
+<h4 id="Bitmap："><a href="#Bitmap：" class="headerlink" title="Bitmap："></a>Bitmap：</h4><p>　　主要是对加载图片进行压缩，避免加载图片多大导致OOM出现。</p>
+<h2 id="六、线程优化"><a href="#六、线程优化" class="headerlink" title="六、线程优化"></a>六、线程优化</h2><p>　　尽量采用线程池，而不是每次都要创建一个Thread对象</p>
+<h2 id="七、其他性能优化的建议"><a href="#七、其他性能优化的建议" class="headerlink" title="七、其他性能优化的建议"></a>七、其他性能优化的建议</h2><p>①　避免过度的创建对象<br>②　不要过度使用枚举， 枚举占用的内存空间要比整型大<br>③　常量请使用static final来修饰<br>④　使用一些Android特有的数据结构， 比如SparseArray和Pair等<br>⑤　适当采用软引用和弱引用<br>⑥　采用内存缓存和磁盘缓存<br>⑦　尽量采用静态内部类</p>
 
       
     </div>
@@ -549,7 +505,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://lvmdu.gitee.io/2020/02/28/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" title="专业基础知识之计算机网络">https://lvmdu.gitee.io/2020/02/28/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</a>
+    <a href="https://lvmdu.gitee.io/2020/02/29/Android%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="Android性能优化">https://lvmdu.gitee.io/2020/02/29/Android%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -564,7 +520,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 网络</a>
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
           
         </div>
       
@@ -577,8 +533,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/02/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%B1%87%E6%80%BB/" rel="next" title="Java基础知识汇总">
-                <i class="fa fa-chevron-left"></i> Java基础知识汇总
+              <a href="/2020/02/28/%E4%B8%93%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B9%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="next" title="专业基础知识之计算机网络">
+                <i class="fa fa-chevron-left"></i> 专业基础知识之计算机网络
               </a>
             
           </div>
@@ -587,8 +543,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/02/29/Android%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="prev" title="Android性能优化">
-                Android性能优化 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/02/29/Android%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="prev" title="Android内存泄漏">
+                Android内存泄漏 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -812,7 +768,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-网络分层体系结构"><span class="nav-number">1.</span> <span class="nav-text">1. 网络分层体系结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-GET-和-POST-两种请求方式的区别"><span class="nav-number">2.</span> <span class="nav-text">2. GET 和 POST 两种请求方式的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-TCP-和-UDP-的区别"><span class="nav-number">3.</span> <span class="nav-text">3. TCP 和 UDP 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-TCP连接的建立与终止"><span class="nav-number">4.</span> <span class="nav-text">4. TCP连接的建立与终止</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#三次握手"><span class="nav-number">4.1.</span> <span class="nav-text">三次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四次挥手"><span class="nav-number">4.2.</span> <span class="nav-text">四次挥手</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、布局优化"><span class="nav-number">1.</span> <span class="nav-text">一、布局优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、绘制优化"><span class="nav-number">2.</span> <span class="nav-text">二、绘制优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、内存泄漏优化"><span class="nav-number">3.</span> <span class="nav-text">三、内存泄漏优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、响应速度优化"><span class="nav-number">4.</span> <span class="nav-text">四、响应速度优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、ListView-RecycleView及Bitmap优化"><span class="nav-number">5.</span> <span class="nav-text">五、ListView&#x2F;RecycleView及Bitmap优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ListView-RecycleView："><span class="nav-number">5.0.1.</span> <span class="nav-text">ListView&#x2F;RecycleView：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bitmap："><span class="nav-number">5.0.2.</span> <span class="nav-text">Bitmap：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六、线程优化"><span class="nav-number">6.</span> <span class="nav-text">六、线程优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七、其他性能优化的建议"><span class="nav-number">7.</span> <span class="nav-text">七、其他性能优化的建议</span></a></li></ol></div>
             
 
           </div>
