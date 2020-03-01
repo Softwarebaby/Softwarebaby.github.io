@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>源码分析（一） 网络框架</title>
+    <url>/2020/03/01/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6/</url>
+    <content><![CDATA[<h2 id="一、Volley"><a href="#一、Volley" class="headerlink" title="一、Volley"></a>一、Volley</h2><h3 id="1-使用方法"><a href="#1-使用方法" class="headerlink" title="1. 使用方法"></a>1. 使用方法</h3><p>（1）通过Volley.newRequestQueue获取一个RequestQueue对象<br>（2）创建一个Request(StringRequest/JsonRequest/ImageRequest)对象<br>（3）将Request对象通过add方法添加到RequestQueue中</p>
+<h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h3><p><img src="/images/img_volley.png" alt="img_volley"></p>
+<h2 id="二-OkHttp"><a href="#二-OkHttp" class="headerlink" title="二. OkHttp"></a>二. OkHttp</h2><h3 id="1-使用方法-1"><a href="#1-使用方法-1" class="headerlink" title="1. 使用方法"></a>1. 使用方法</h3><p>（1）通过Request.Builder创建一个Request对象<br>（2）创建一个OkHttpClient对象<br>（3）将Request传入OkHttpClient对象中(mOkHttpClient.newCall(request))，来创建一个Call对象<br>(4)调用Call对象的execute(同步)/enqueue(异步)方法来执行</p>
+<h3 id="2-原理-1"><a href="#2-原理-1" class="headerlink" title="2. 原理"></a>2. 原理</h3><p><img src="/images/img_okhttp.png" alt="img_okhttp"></p>
+<h2 id="三、Retrofit"><a href="#三、Retrofit" class="headerlink" title="三、Retrofit"></a>三、Retrofit</h2><h3 id="1-使用方法-2"><a href="#1-使用方法-2" class="headerlink" title="1. 使用方法"></a>1. 使用方法</h3><p><strong>一般用法：</strong><br>（1）定义请求接口类，使用@GET/@POST注解注解编写网络请求接口<br>（2）使用Buider模式创建Retrofit实例<br>（3）通过Retrofit对象的create方法传入之前的请求接口类，来创建请求实体对象<br>（4）调用请求对象的请求方法生成能够发起网络请求的Call对象<br>（5）调用Call对象的enqueue方法发起异步网络请求</p>
+<p><strong>高级用法：</strong><br>适配OkHttpCall的Factory：<br>（1）定义请求接口类，使用@GET/@POST注解编写网络请求接口<br>（2）使用单例模式创建一个RetrofitFactory<br>（3）在RetrofitFactory内部创建一个OkHttpClient，并通过Builder模式利用OkHttpClient来创建一个Retrofit实例<br>（4）通过Retrofit对象的create方法传入之前的请求接口类，来创建请求实体对象<br>（5）客户端通过RetroFactory来调用请求对象的请求方法生成能够发起网络请求的Call对象<br>（6）调用Call对象的enqueue方法发起异步网络请求</p>
+<h3 id="2-原理-2"><a href="#2-原理-2" class="headerlink" title="2. 原理"></a>2. 原理</h3><p>　　Retrofit的create方法通过<strong>动态代理</strong>的模式，生成了实现了具体的网络请求接口的对象，并在InvocationHandler的invoke方法中统一处理网络请求接口实体对象的方法，根据方法生成一个ServiceMethod对象，并将其放入缓存中，然后根据ServiceMethod对象和网络请求的参数去构造一个OkHttpCall对象，最后调用serviceMethod的callAdapter的adapt方法，传入将OkHttpCall对象。（callAdapter的目的主要是为了适配OkHttpCall对象，其内部会对OkHttpCall对象进行包装，生成对应返回类型的对象。）底层真正处理网络请求的还是OkHttp框架。</p>
+]]></content>
+      <categories>
+        <category>Android进阶</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Android新特性</title>
     <url>/2020/02/29/Android%E6%96%B0%E7%89%B9%E6%80%A7/</url>
     <content><![CDATA[<h2 id="一、Android-5-0-新特性"><a href="#一、Android-5-0-新特性" class="headerlink" title="一、Android 5.0 新特性"></a>一、Android 5.0 新特性</h2><ol>
@@ -233,6 +251,7 @@
 <p><strong>为什么要三次握手？</strong><br>　　为了防止已失效的连接请求报文段突然又传送到了服务端， 因而产生错误。</p>
 <h4 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h4><p>• 第一次挥手： 客户端设置 seq 和 ACK， 向服务端发送一个 FIN 报文段。 此时， 客户端进入 FIN_WAIT_1 状态， 表示客户端没有数据要发送给服务端了。<br>• 第二次挥手： 服务端收到了客户端发送的 FIN 报文段， 向客户端回了一个 ACK 报文段。<br>• 第三次挥手： 服务端向客户端发送 FIN 报文段， 请求关闭连接， 同时服务端进入 LAST_ACK 状态。<br>• 第四次挥手： 客户端收到服务端发送的 FIN 报文段， 向服务端发送 ACK 报文段， 然后客户端进入 TIME_WAIT 状态。 服务端收到客户端的 ACK 报文段以后， 就关闭连接。 此时， 客户端等待 2MSL（最大报文段生存时间） 后依然没有收到回复， 则说明服务端已正常关闭， 这样客户端也可以关闭连接了。</p>
 <p><strong>为什么要四次挥手？</strong><br>　　为了保证在最后断开的时候，客户端能够发送最后一个ACK报文段能够被服务器接收到，从而避免在下一个连接中出现上一个连接的滞留的报文。</p>
+<h3 id="5-状态码"><a href="#5-状态码" class="headerlink" title="5. 状态码"></a>5. 状态码</h3><p>　　状态码由3位数字组成， 第一个数字定义了响应的类别， 且有以下5种可能取值。<br>• 1xx： 指示信息， 收到请求， 需要请求者继续执行操作。<br>• 2xx： 请求成功， 请求已被成功接收并处理。<br>• 3xx： 重定向， 要完成请求必须进行更进一步的操作。<br>• 4xx： 客户端错误， 请求有语法错误或请求无法实现。<br>• 5xx： 服务器错误， 服务器不能实现合法的请求。<br>常见的状态码如下：<br>• 200 OK： 客户端请求成功。<br>• 400 Bad Request： 客户端请求有语法错误， 服务器无法理解。<br>• 401 Unauthorized： 客户端请求未经授权， 这个状态码必须和WWW-Authenticate报头域一起使用。<br>• 403 Forbidden： 客户端请求被服务端拒绝。<br>• 404 Not Found： 客户端请求地址错误， 资源未找到<br>• 500 Internal Server Error： 服务器内部错误， 无法完成请求。<br>• 503 Server Unavailable： 服务器当前不能处理客户端的请求， 一段时间后可能恢复正常。</p>
 ]]></content>
       <categories>
         <category>专业基础知识</category>
