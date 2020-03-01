@@ -93,7 +93,7 @@
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_memory_4.jpg">
 <meta property="og:image" content="https://lvmdu.gitee.io/images/img_memory_5.jpg">
 <meta property="article:published_time" content="2020-02-29T08:19:00.000Z">
-<meta property="article:modified_time" content="2020-03-01T00:59:58.949Z">
+<meta property="article:modified_time" content="2020-03-01T01:03:43.429Z">
 <meta property="article:author" content="Bob Du">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -398,7 +398,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.6k
+                  2.5k
                 </span>
               
 
@@ -414,7 +414,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9
+                  8
                 </span>
               
             </div>
@@ -501,8 +501,7 @@
 <h4 id="2-内存泄漏的定位和分析"><a href="#2-内存泄漏的定位和分析" class="headerlink" title="2. 内存泄漏的定位和分析"></a>2. 内存泄漏的定位和分析</h4><h5 id="（1）adb命令验证是否存在内存泄漏"><a href="#（1）adb命令验证是否存在内存泄漏" class="headerlink" title="（1）adb命令验证是否存在内存泄漏"></a>（1）adb命令验证是否存在内存泄漏</h5><p>1）打开要测试的apk，然后返回退出到主界面<br>2）AS的Terminal中输入命令：</p>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb <span class="keyword">shell</span><span class="bash"> dumpsys meminfo 包名 -d</span></span><br></pre></td></tr></table></figure>
 <p>　　然后便可以看到内存的一些情况<br>拉到下面可以看到：<br><img src="/images/img_memory_1.jpg" alt="img_memory_1"><br>　　退出APK之后，对象本应该都被回收，然而这里可以看到，还有View以及Activity占用着内存，由此可以知道内存泄漏了。</p>
-<h5 id="（2）Android-Profiler（性能分析器）定位内存泄漏"><a href="#（2）Android-Profiler（性能分析器）定位内存泄漏" class="headerlink" title="（2）Android Profiler（性能分析器）定位内存泄漏"></a>（2）Android Profiler（性能分析器）定位内存泄漏</h5><p>1）进入内存分析界面<br>2）打开apk，然后返回键退出，然后点击上图中垃圾桶形状的图标进行垃圾回收，多点几次，直到内存没有什么变化<br>3）获取内存快照<br>4）查看Head Dump<br><img src="/images/img_memory_2.jpg" alt="img_memory_2"><br>Shallow Heap（浅堆） 表示该对象自身占用的堆内存，不包括它引用的对象。<br>针对非数组类型的对象，它的大小就是对象与它所有的成员变量大小的总和。</p>
-<p>Shallow Heap（浅堆） 表示该对象自身占用的堆内存，不包括它引用的对象。<br>针对非数组类型的对象，它的大小就是对象与它所有的成员变量大小的总和。</p>
+<h5 id="（2）Android-Profiler（性能分析器）定位内存泄漏"><a href="#（2）Android-Profiler（性能分析器）定位内存泄漏" class="headerlink" title="（2）Android Profiler（性能分析器）定位内存泄漏"></a>（2）Android Profiler（性能分析器）定位内存泄漏</h5><p>1）进入内存分析界面<br>2）打开apk，然后返回键退出，然后点击上图中垃圾桶形状的图标进行垃圾回收，多点几次，直到内存没有什么变化<br>3）获取内存快照<br>4）查看Head Dump<br><img src="/images/img_memory_2.jpg" alt="img_memory_2"></p>
 <ul>
 <li>Shallow Heap（浅堆） 表示该对象自身占用的堆内存，不包括它引用的对象。</li>
 <li>Retained Heap（深堆） 表示当前对象大小 + 当前对象可直接或间接引用到的对象的大小总和。<br>换句话说，Retained Size就是当前对象被GC后，从Heap上总共能释放掉的内存。</li>
