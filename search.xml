@@ -32,6 +32,34 @@
       </tags>
   </entry>
   <entry>
+    <title>Android系统之Framework</title>
+    <url>/2020/03/01/Android%E7%B3%BB%E7%BB%9F-Framework/</url>
+    <content><![CDATA[<h2 id="一、Android-系统架构"><a href="#一、Android-系统架构" class="headerlink" title="一、Android 系统架构"></a>一、Android 系统架构</h2><p>　　Android系统架构是安卓系统的体系结构，和其操作系统一样，采用了分层的架构，共分为四层：</p>
+<ul>
+<li>应用层（Applications）</li>
+<li>应用框架层（Framework）</li>
+<li>系统运行层（Librarys + Android Runtime）</li>
+<li>Linux内核层（Linux Kernel）</li>
+</ul>
+<a id="more"></a>
+
+<p><img src="/images/img_android_framework.jpg" alt="img_android_framework"></p>
+<h2 id="二、什么是-Framework？"><a href="#二、什么是-Framework？" class="headerlink" title="二、什么是 Framework？"></a>二、什么是 Framework？</h2><p>　　Android Framework 位于Android系统架构的第二层，是把一些基本的的或者和设备打交道的服务抽象起来作API，给Application应用调用。这里是用Android中最底层的java代码。里面通过JNI调用c、c++（Library）来和设备打交道，最终调用到Linux内核。</p>
+<p><strong>作用：</strong><br>　　提供Android开发人员一系列的服务与API接口。</p>
+<h2 id="三、Framework-组成"><a href="#三、Framework-组成" class="headerlink" title="三、Framework 组成"></a>三、Framework 组成</h2><h3 id="1-服务端"><a href="#1-服务端" class="headerlink" title="1. 服务端"></a>1. 服务端</h3><p>（1）<strong>ActivityManagerService(AMS)</strong>：负责调度整个app中的Activity，管理所有Activity的生命周期。是Android上层系统最核心的模块之一，主要对Android的四大组件进行管理也包括一些诸如：电源，窗口，权限的内容。<br>（2）<strong>WindowsManagerService(WMS)</strong>：为所有的应用程序分配窗口，并管理这些窗口。<br>（3）<strong>PackageManagerService(PMS)</strong>：管理所有Package的信息，包括安装、卸载、更新等。<br><strong>注意：</strong> Android系统的三个核心：AMS、WMS、View。</p>
+<h3 id="2-客户端"><a href="#2-客户端" class="headerlink" title="2. 客户端"></a>2. 客户端</h3><p>（1）ActivityThread：应用程序的主线程类，所有的应用程序有且只有一个ActivityThread，程序的入口为main函数。<br>（2）Activity：apk运行的最小单位。<br>（3）ViewRoot：负责客户端和WMS的交互。内部类有 W 类，W类继承自Binder， 负责ViewRoot和WMS之间的IPC通信。内部还有 ViewRootHandler 继承自Handler，当W类收到消息以后通过ViewRootHandler可以发送给UI线程。<br>（4）PhoneWindow：继承自Window，对外提供了统一窗口操作API，里面放置了一个DecorView类。<br>（5）DecorView：PhoneWindow的内部类，继承自FrameLayout，可以看到的View的所有，我们写的布局View就是放在这个里面。<br>（6）WindowsManager：客户端和WMS交流的中介，客户端想要创建窗口，得先提前告知WindowsManager，客户端不能直接和WMS通信。</p>
+<h3 id="3-Linux驱动"><a href="#3-Linux驱动" class="headerlink" title="3. Linux驱动"></a>3. Linux驱动</h3><p>（1）SurfaceFlingger(SF)：负责将各个画面(Surface)显示到屏幕上。<br>（2）Binder：负责跨进程的IPC通信。</p>
+<h2 id="四、有关-Framework-的知识点"><a href="#四、有关-Framework-的知识点" class="headerlink" title="四、有关 Framework 的知识点"></a>四、有关 Framework 的知识点</h2><h3 id="1-APK的打包流程"><a href="#1-APK的打包流程" class="headerlink" title="1. APK的打包流程"></a>1. APK的打包流程</h3><p>（1）打包资源文件，生成R.java文件。（aapt工具：Android资源打包工具）<br>（2）处理AIDL文件，生成对应的Java文件。如果没有AIDL文件，此步骤无。（aidl工具）<br>（3）编译Java文件，生成对应的Class文件。（javac工具）<br>（4）把Class文件转化成DVM支持的Dex文件。（dex工具）<br>（5）打包生成未签名的APK文件。(apkbuilder工具)<br>（6）对未签名的APK文件进行签名。（jarsigner工具：jar文件的签名工具）<br>（7）对签名后的APK文件进行对齐处理。如果不进行对齐处理，就不能发布到谷歌应用商店。（zipalign工具：字节码对齐工具）</p>
+<h3 id="2-APP的启动流程"><a href="#2-APP的启动流程" class="headerlink" title="2. APP的启动流程"></a>2. APP的启动流程</h3><p><img src="/images/img_app_start.png" alt="img_app_start"></p>
+]]></content>
+      <categories>
+        <category>Android进阶</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>深入理解JVM之垃圾收集算法和垃圾回收机制</title>
     <url>/2020/03/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8B%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<h2 id="一、何时GC？"><a href="#一、何时GC？" class="headerlink" title="一、何时GC？"></a>一、何时GC？</h2><h3 id="（一）引用计数算法"><a href="#（一）引用计数算法" class="headerlink" title="（一）引用计数算法"></a>（一）引用计数算法</h3><p>　　给对象添加一个引用计数器， 每当有一个地方引用它时， 计数器值就加1； 当引用失效时， 计数器值就减1； 任何时刻计数器为0的对象就是不可能被再使用的。<br>　　主流的JVM里面没有选用引用计数算法来管理内存， 其中最主要的原因是它<strong>很难解决对象间的互循环引用的问题</strong>。</p>
@@ -111,6 +139,33 @@
       </categories>
       <tags>
         <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>开源框架（三） 图片加载框架</title>
+    <url>/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-3-%E5%9B%BE%E7%89%87%E5%8A%A0%E8%BD%BD%E6%A1%86%E6%9E%B6/</url>
+    <content><![CDATA[<h2 id="一、Picasso"><a href="#一、Picasso" class="headerlink" title="一、Picasso"></a>一、Picasso</h2><ol>
+<li>缓存图片的原图到本地（即时改变了图片的大小，也是下载一次完全大小的图片）</li>
+<li>默认Bitmap格式为ARGB_8888，内存占用较大</li>
+</ol>
+<a id="more"></a>
+
+<h2 id="二、Glide"><a href="#二、Glide" class="headerlink" title="二、Glide"></a>二、Glide</h2><ol>
+<li>改变图片的大小再加载到内存（减小OOM的可能性）</li>
+<li>默认Bitmap格式为RGB_565</li>
+<li>与Activity/Fragment生命周期一致</li>
+</ol>
+<h2 id="三、Fresco"><a href="#三、Fresco" class="headerlink" title="三、Fresco"></a>三、Fresco</h2><ol>
+<li>使用了Ashmem匿名内存机制，有效地对内存块的图片进行管理（减少OOM的可能性）</li>
+<li>多图请求，先加载低分辨率的图片，然后再显示高分辨率的图片</li>
+<li>支持GIF、WebP格式</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Android进阶</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
       </tags>
   </entry>
   <entry>
@@ -233,6 +288,8 @@
 <td align="center">是</td>
 </tr>
 </tbody></table>
+<a id="more"></a>
+
 <h2 id="二、HashMap"><a href="#二、HashMap" class="headerlink" title="二、HashMap"></a>二、HashMap</h2><h3 id="（一）性质"><a href="#（一）性质" class="headerlink" title="（一）性质"></a>（一）性质</h3><p>（1）Key 和 Value 都可以为空<br>（2）value 允许重复， Key 不允许重复<br>（3）映射是无序的（散列有序），无法按照添加顺序遍历（注：LinkedHashMap 有序）<br>（4）HashMap是非线程同步的实现，因此不是线程安全的</p>
 <p>注意：</p>
 <ul>
