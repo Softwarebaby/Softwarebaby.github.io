@@ -308,11 +308,12 @@
 <p>　　当Entry的数量大于（Capacity * Load Factor），则会重新resize一个原来长度 2 倍的HashMap，并且重新调用hash方法。</p>
 <h3 id="（二）实现原理"><a href="#（二）实现原理" class="headerlink" title="（二）实现原理"></a>（二）实现原理</h3><h4 id="1-底层数据结构"><a href="#1-底层数据结构" class="headerlink" title="1. 底层数据结构"></a>1. 底层数据结构</h4><ul>
 <li>JDK 7：位桶(bucket)（Node[] table: 哈希桶数组） + 链表</li>
-<li>JDK 8：位桶 + 链表/红黑树<br><img src="/images/img_hashmap.png" alt="img_hashmap"><h4 id="2-put方法-get方法"><a href="#2-put方法-get方法" class="headerlink" title="2. put方法 / get方法"></a>2. put方法 / get方法</h4>（1）<strong>put方法</strong> 原理：<br>1）先对key值进行hash操作计算hashCode， 然后再通过<br>hashCode进一步计算下标index；<br>2）根据index查找到对应的bucket</li>
+<li>JDK 8：位桶 + 链表/红黑树<br><img src="/images/img_hashmap.png" alt="img_hashmap"><h4 id="2-put方法-get方法"><a href="#2-put方法-get方法" class="headerlink" title="2. put方法 / get方法"></a>2. put方法 / get方法</h4>（1）<strong>put方法</strong> 原理：<br>　　1）先对key值进行hash操作计算hashCode， 然后再通过<br>hashCode进一步计算下标index；<br>　　2）根据index查找到对应的bucket</li>
 <li>如果没发生碰撞直接放到bucket里；</li>
-<li>如果碰撞了， 以链表的形式存在buckets后如果碰撞导致链表过长(大于等于 TREEIFY_THRESHOLD)， 就把链表转换成红黑树；<br>3）如果节点已经存在就替换old value(保证key的唯一性)；<br>4）如果bucket满了(超过load factor * current capacity)， 就要resize。<br><img src="/images/img_hashmap_put.png" alt="img_hashmap_put"></li>
+<li>如果碰撞了， 以链表的形式存在buckets后如果碰撞导致链表过长(大于等于 TREEIFY_THRESHOLD)， 就把链表转换成红黑树；</li>
 </ul>
-<p>（2）<strong>get方法</strong> 原理：<br>1）先对key值进行hash操作计算hashCode， 然后再通过<br>hashCode进一步计算下标index。<br>2）根据index查找到对应的bucket</p>
+<p>　　3）如果节点已经存在就替换old value(保证key的唯一性)；<br>　　4）如果bucket满了(超过load factor * current capacity)， 就要resize。<br><img src="/images/img_hashmap_put.png" alt="img_hashmap_put"></p>
+<p>（2）<strong>get方法</strong> 原理：<br>　　1）先对key值进行hash操作计算hashCode， 然后再通过<br>hashCode进一步计算下标index。<br>　　2）根据index查找到对应的bucket</p>
 <ul>
 <li>如果bucket里只有一个节点， 直接命中，取出它的value返回；</li>
 <li>如果bucket的发生碰撞， 则通过key.equals()在链中找。<br>a. 若为链表， 则在链表中通过key.equals()查找， O(n)。<br>b. 若为树， 则在树中通过key.equals()查找， O(logn)；</li>
