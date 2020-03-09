@@ -295,7 +295,7 @@
 <p>注意：</p>
 <ul>
 <li>HashTable（Java 5.0 已废弃）是线程安全的，在单线程的条件下，速度要比HashMap慢</li>
-<li>ConcurrentHashMap（Java 5.0 引入）不是线程安全的</li>
+<li>ConcurrentHashMap（Java 5.0 引入）是线程安全的</li>
 <li>HashMap可以通过以下语句实现同步：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Collections.synchronizeMap(hashMap);</span><br></pre></td></tr></table></figure>
 
 </li>
