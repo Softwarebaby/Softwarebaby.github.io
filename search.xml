@@ -155,6 +155,7 @@
 <li>默认Bitmap格式为RGB_565</li>
 <li>与Activity/Fragment生命周期一致</li>
 </ol>
+<h4 id="原理"><a href="#原理" class="headerlink" title="原理:"></a>原理:</h4><p><img src="/images/img_glide.jpg" alt="img_glide"></p>
 <h2 id="三、Fresco"><a href="#三、Fresco" class="headerlink" title="三、Fresco"></a>三、Fresco</h2><ol>
 <li>使用了Ashmem匿名内存机制，有效地对内存块的图片进行管理（减少OOM的可能性）</li>
 <li>多图请求，先加载低分辨率的图片，然后再显示高分辨率的图片</li>

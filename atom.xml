@@ -119,9 +119,9 @@
     <link href="https://lvmdu.gitee.io/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-3-%E5%9B%BE%E7%89%87%E5%8A%A0%E8%BD%BD%E6%A1%86%E6%9E%B6/"/>
     <id>https://lvmdu.gitee.io/2020/03/01/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6-3-%E5%9B%BE%E7%89%87%E5%8A%A0%E8%BD%BD%E6%A1%86%E6%9E%B6/</id>
     <published>2020-03-01T04:10:00.000Z</published>
-    <updated>2020-03-03T03:07:17.025Z</updated>
+    <updated>2020-03-09T01:15:34.253Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="一、Picasso"><a href="#一、Picasso" class="headerlink" title="一、Picasso"></a>一、Picasso</h2><ol><li>缓存图片的原图到本地（即时改变了图片的大小，也是下载一次完全大小的图片）</li><li>默认Bitmap格式为ARGB_8888，内存占用较大</li></ol><a id="more"></a><h2 id="二、Glide"><a href="#二、Glide" class="headerlink" title="二、Glide"></a>二、Glide</h2><ol><li>改变图片的大小再加载到内存（减小OOM的可能性）</li><li>默认Bitmap格式为RGB_565</li><li>与Activity/Fragment生命周期一致</li></ol><h2 id="三、Fresco"><a href="#三、Fresco" class="headerlink" title="三、Fresco"></a>三、Fresco</h2><ol><li>使用了Ashmem匿名内存机制，有效地对内存块的图片进行管理（减少OOM的可能性）</li><li>多图请求，先加载低分辨率的图片，然后再显示高分辨率的图片</li><li>支持GIF、WebP格式</li></ol>]]></content>
+    <content type="html"><![CDATA[<h2 id="一、Picasso"><a href="#一、Picasso" class="headerlink" title="一、Picasso"></a>一、Picasso</h2><ol><li>缓存图片的原图到本地（即时改变了图片的大小，也是下载一次完全大小的图片）</li><li>默认Bitmap格式为ARGB_8888，内存占用较大</li></ol><a id="more"></a><h2 id="二、Glide"><a href="#二、Glide" class="headerlink" title="二、Glide"></a>二、Glide</h2><ol><li>改变图片的大小再加载到内存（减小OOM的可能性）</li><li>默认Bitmap格式为RGB_565</li><li>与Activity/Fragment生命周期一致</li></ol><h4 id="原理"><a href="#原理" class="headerlink" title="原理:"></a>原理:</h4><p><img src="/images/img_glide.jpg" alt="img_glide"></p><h2 id="三、Fresco"><a href="#三、Fresco" class="headerlink" title="三、Fresco"></a>三、Fresco</h2><ol><li>使用了Ashmem匿名内存机制，有效地对内存块的图片进行管理（减少OOM的可能性）</li><li>多图请求，先加载低分辨率的图片，然后再显示高分辨率的图片</li><li>支持GIF、WebP格式</li></ol>]]></content>
     
     <summary type="html">
     
